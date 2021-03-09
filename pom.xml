@@ -28,6 +28,34 @@
     <artifactId>spring-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>HomeAutomation Spring implementation of the Core</description>
+    <url>https://github.com/davemeier82/homeautomation-spring-core</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>David Meier</name>
+            <email>davidmeier1@gmail.com</email>
+            <organization>David Meier</organization>
+            <organizationUrl>https://github.com/davemeier82</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/davemeier82/homeautomation-spring-core.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/davemeier82/homeautomation-spring-core.git
+        </developerConnection>
+        <url>https://github.com/davemeier82/homeautomation-spring-core</url>
+    </scm>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/davemeier82/homeautomation-spring-core/issues</url>
+    </issueManagement>
+
     <properties>
         <core.version>0.0.1-SNAPSHOT</core.version>
     </properties>
