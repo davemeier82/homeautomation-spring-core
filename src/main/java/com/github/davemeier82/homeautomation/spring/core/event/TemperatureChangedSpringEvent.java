@@ -16,7 +16,7 @@
 
 package com.github.davemeier82.homeautomation.spring.core.event;
 
-import com.github.davemeier82.homeautomation.core.device.TemperatureSensor;
+import com.github.davemeier82.homeautomation.core.device.property.TemperatureSensor;
 import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
 import com.github.davemeier82.homeautomation.core.event.TemperatureChangedEvent;
 import org.springframework.context.ApplicationEvent;

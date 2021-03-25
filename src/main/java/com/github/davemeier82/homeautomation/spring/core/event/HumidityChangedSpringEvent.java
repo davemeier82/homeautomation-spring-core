@@ -16,7 +16,7 @@
 
 package com.github.davemeier82.homeautomation.spring.core.event;
 
-import com.github.davemeier82.homeautomation.core.device.HumiditySensor;
+import com.github.davemeier82.homeautomation.core.device.property.HumiditySensor;
 import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
 import com.github.davemeier82.homeautomation.core.event.HumidityChangedEvent;
 import org.springframework.context.ApplicationEvent;

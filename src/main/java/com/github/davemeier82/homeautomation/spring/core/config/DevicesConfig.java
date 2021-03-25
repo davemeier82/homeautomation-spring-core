@@ -16,6 +16,9 @@
 
 package com.github.davemeier82.homeautomation.spring.core.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class DevicesConfig {
@@ -24,8 +27,9 @@ public class DevicesConfig {
 
   private final String version;
   private final List<DeviceConfig> devices;
-  
-  public DevicesConfig(String version, List<DeviceConfig> devices) {
+
+  @JsonCreator
+  public DevicesConfig(@JsonProperty("version") String version, @JsonProperty("devices") List<DeviceConfig> devices) {
     this.version = version;
     this.devices = devices;
   }

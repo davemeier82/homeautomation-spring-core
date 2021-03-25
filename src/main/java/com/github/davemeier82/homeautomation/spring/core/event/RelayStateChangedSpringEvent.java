@@ -16,7 +16,7 @@
 
 package com.github.davemeier82.homeautomation.spring.core.event;
 
-import com.github.davemeier82.homeautomation.core.device.Relay;
+import com.github.davemeier82.homeautomation.core.device.property.Relay;
 import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
 import com.github.davemeier82.homeautomation.core.event.RelayStateChangedEvent;
 import org.springframework.context.ApplicationEvent;

@@ -16,13 +16,18 @@
 
 package com.github.davemeier82.homeautomation.spring.core.config;
 
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class DeviceConfig {
 
   private final String type;
   private final String displayName;
   private final String id;
 
-  public DeviceConfig(String type, String displayName, String id) {
+  @JsonCreator
+  public DeviceConfig(@JsonProperty("type") String type, @JsonProperty("displayName") String displayName, @JsonProperty("id") String id) {
     this.type = type;
     this.displayName = displayName;
     this.id = id;

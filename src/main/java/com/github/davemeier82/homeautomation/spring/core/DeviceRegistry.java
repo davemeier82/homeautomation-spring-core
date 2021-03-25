@@ -30,7 +30,7 @@ import static com.github.davemeier82.homeautomation.core.device.DeviceId.deviceI
 
 public class DeviceRegistry {
 
-  private Map<DeviceId, Device> devices = new ConcurrentHashMap<>();
+  private final Map<DeviceId, Device> devices = new ConcurrentHashMap<>();
 
   public Set<Device> getDevices() {
     return Set.copyOf(devices.values());

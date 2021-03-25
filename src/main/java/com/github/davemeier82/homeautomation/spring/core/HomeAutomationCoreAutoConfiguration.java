@@ -17,7 +17,6 @@
 package com.github.davemeier82.homeautomation.spring.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.github.davemeier82.homeautomation.core.PushNotificationService;
 import com.github.davemeier82.homeautomation.core.device.DeviceFactory;
 import com.github.davemeier82.homeautomation.core.event.EventFactory;
@@ -29,29 +28,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
-import org.springframework.core.Ordered;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestOperations;
 
 import java.nio.file.Path;
 import java.util.Set;
 
-import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
-@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+@AutoConfigureOrder(LOWEST_PRECEDENCE)
 public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnClass(PushoverService.class)
+  @ConditionalOnMissingBean
   PushNotificationService pushNotificationService(RestOperations restOperations,
                                                   @Value("${pushover.user}") String user,
                                                   @Value("${pushover.token}") String token
@@ -61,37 +60,38 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnBean(MqttClient.class)
+  @ConditionalOnMissingBean
   MqttClientConnector mqttClientConnector(MqttClient mqttClient) {
     return new MqttClientConnector(mqttClient);
   }
 
   @Bean
-  public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-    return builder -> builder.modulesToInstall(new ParameterNamesModule(PROPERTIES));
-  }
-
-  @Bean
+  @ConditionalOnMissingBean
   EventFactory eventFactory() {
     return new SpringEventFactory();
   }
 
   @Bean
+  @ConditionalOnMissingBean
   EventPublisher eventPublisher(ApplicationEventPublisher applicationEventPublisher) {
     return new SpringEventPublisher(applicationEventPublisher);
   }
 
   @Bean
+  @ConditionalOnMissingBean
   DeviceRegistry deviceRegistry() {
     return new DeviceRegistry();
   }
 
   @Bean
-  public RestOperations restOperations(RestTemplateBuilder builder) {
+  @ConditionalOnMissingBean
+  RestOperations restOperations(RestTemplateBuilder builder) {
     return builder.build();
   }
 
   @Bean
-  public ApplicationEventMulticaster applicationEventMulticaster(
+  @ConditionalOnMissingBean
+  ApplicationEventMulticaster applicationEventMulticaster(
       @Value("${event.executor.core-pool-size:1}") int corePoolSize,
       @Value("${event.executor.max-pool-size:8}") int maxPoolSize
   ) {
@@ -106,6 +106,7 @@ public class HomeAutomationCoreAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnProperty(name = "config.location")
   DeviceLoader deviceLoader(@Value("${config.location}") String configPath,
                             ObjectMapper objectMapper,
@@ -117,6 +118,7 @@ public class HomeAutomationCoreAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnProperty(name = "config.writer.enabled", havingValue = "true")
   DeviceConfigWriter deviceConfigWriter(DeviceRegistry deviceRegistry, ObjectMapper objectMapper, @Value("${config.location}") String configPath) {
     return new DeviceConfigWriter(deviceRegistry, objectMapper, Path.of(configPath));

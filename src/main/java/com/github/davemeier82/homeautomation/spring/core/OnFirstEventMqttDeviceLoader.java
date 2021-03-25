@@ -62,7 +62,6 @@ public class OnFirstEventMqttDeviceLoader {
           if (topic.startsWith(device.getTopic())) {
             device.processMessage(topic, byteBufferOptional);
           }
-          mqttClient.subscribe(device.getTopic(), device::processMessage);
         });
         unknownDeviceIds.add(deviceId);
       }

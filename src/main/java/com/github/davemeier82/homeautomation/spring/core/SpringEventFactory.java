@@ -16,7 +16,8 @@
 
 package com.github.davemeier82.homeautomation.spring.core;
 
-import com.github.davemeier82.homeautomation.core.device.*;
+import com.github.davemeier82.homeautomation.core.device.Device;
+import com.github.davemeier82.homeautomation.core.device.property.*;
 import com.github.davemeier82.homeautomation.core.event.*;
 import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
 import com.github.davemeier82.homeautomation.spring.core.event.*;
@@ -37,11 +38,6 @@ public class SpringEventFactory implements EventFactory {
   @Override
   public RelayStateChangedEvent createRelayStateChangedEvent(Relay relay, DataWithTimestamp<Boolean> isOn) {
     return new RelayStateChangedSpringEvent(relay, isOn);
-  }
-
-  @Override
-  public MultiRelayStateChangedEvent createMultiRelayStateChangedEvent(MultiRelay relay, int indexOfChangedRelay, DataWithTimestamp<Boolean> isOn) {
-    return new MultiRelayStateChangedSpringEvent(relay, indexOfChangedRelay, isOn);
   }
 
   @Override

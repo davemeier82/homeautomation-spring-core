@@ -16,7 +16,7 @@
 
 package com.github.davemeier82.homeautomation.spring.core.event;
 
-import com.github.davemeier82.homeautomation.core.device.WindowSensor;
+import com.github.davemeier82.homeautomation.core.device.property.WindowSensor;
 import com.github.davemeier82.homeautomation.core.event.WindowOpenedEvent;
 import org.springframework.context.ApplicationEvent;
 

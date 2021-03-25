@@ -16,7 +16,7 @@
 
 package com.github.davemeier82.homeautomation.spring.core.event;
 
-import com.github.davemeier82.homeautomation.core.device.MotionSensor;
+import com.github.davemeier82.homeautomation.core.device.property.MotionSensor;
 import com.github.davemeier82.homeautomation.core.event.MotionDetectedEvent;
 import org.springframework.context.ApplicationEvent;
 
