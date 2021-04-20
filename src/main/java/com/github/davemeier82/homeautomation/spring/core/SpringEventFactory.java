@@ -81,4 +81,14 @@ public class SpringEventFactory implements EventFactory {
   public NewDeviceCreatedEvent createNewDeviceCreatedEvent(Device device) {
     return new NewDeviceCreatedSpringEvent(device);
   }
+
+  @Override
+  public RollerStateChangedEvent createRollerStateChangedEvent(Roller roller, DataWithTimestamp<RollerState> state) {
+    return new RollerStateChangedSpringEvent(roller, state);
+  }
+
+  @Override
+  public RollerPositionChangedEvent createRollerPositionChangedEvent(Roller roller, DataWithTimestamp<Integer> positionInPercent) {
+    return new RollerPositionChangedSpringEvent(roller, positionInPercent);
+  }
 }
