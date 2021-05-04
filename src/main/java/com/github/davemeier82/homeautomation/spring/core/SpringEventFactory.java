@@ -91,4 +91,10 @@ public class SpringEventFactory implements EventFactory {
   public RollerPositionChangedEvent createRollerPositionChangedEvent(Roller roller, DataWithTimestamp<Integer> positionInPercent) {
     return new RollerPositionChangedSpringEvent(roller, positionInPercent);
   }
+
+  @Override
+  public IlluminanceChangedEvent createIlluminanceChangedEvent(IlluminanceSensor sensor, DataWithTimestamp<Integer> lux
+  ) {
+    return new IlluminanceChangedSpringEvent(sensor, lux);
+  }
 }
