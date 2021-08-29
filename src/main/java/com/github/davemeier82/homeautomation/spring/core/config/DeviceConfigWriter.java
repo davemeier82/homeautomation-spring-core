@@ -76,7 +76,8 @@ public class DeviceConfigWriter {
           .map(this::toConfig)
           .collect(toList());
       Files.writeString(configFilePath,
-          objectMapper.writeValueAsString(new DevicesConfig(DevicesConfig.CURRENT_VERSION, deviceConfigs)),
+          objectMapper.writerWithDefaultPrettyPrinter()
+              .writeValueAsString(new DevicesConfig(DevicesConfig.CURRENT_VERSION, deviceConfigs)),
           TRUNCATE_EXISTING,
           WRITE);
     } catch (IOException e) {
