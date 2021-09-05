@@ -17,6 +17,7 @@
 package com.github.davemeier82.homeautomation.spring.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.davemeier82.homeautomation.core.DeviceStateRepository;
 import com.github.davemeier82.homeautomation.core.PushNotificationService;
 import com.github.davemeier82.homeautomation.core.device.DeviceFactory;
 import com.github.davemeier82.homeautomation.core.event.EventFactory;
@@ -122,5 +123,11 @@ public class HomeAutomationCoreAutoConfiguration {
   @ConditionalOnProperty(name = "config.writer.enabled", havingValue = "true")
   DeviceConfigWriter deviceConfigWriter(DeviceRegistry deviceRegistry, ObjectMapper objectMapper, @Value("${config.location}") String configPath) {
     return new DeviceConfigWriter(deviceRegistry, objectMapper, Path.of(configPath));
+  }
+
+  @Bean
+  @ConditionalOnBean(DeviceStateRepository.class)
+  DeviceStatePersistenceHandler deviceStatePersistenceHandler(DeviceStateRepository deviceStateRepository) {
+    return new DeviceStatePersistenceHandler(deviceStateRepository);
   }
 }
