@@ -17,7 +17,7 @@
 package com.github.davemeier82.homeautomation.spring.core;
 
 import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import com.github.davemeier82.homeautomation.spring.core.event.DevicesLoadedSpringEvent;
 import org.springframework.context.event.EventListener;
 
 public class MqttClientConnector {
@@ -28,7 +28,7 @@ public class MqttClientConnector {
     this.mqttClient = mqttClient;
   }
 
-  @EventListener(ApplicationReadyEvent.class)
+  @EventListener(DevicesLoadedSpringEvent.class)
   public void connectClient() {
     mqttClient.connect();
   }
