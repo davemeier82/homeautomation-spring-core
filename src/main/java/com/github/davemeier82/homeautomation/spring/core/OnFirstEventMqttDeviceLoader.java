@@ -19,7 +19,6 @@ package com.github.davemeier82.homeautomation.spring.core;
 import com.github.davemeier82.homeautomation.core.device.DeviceId;
 import com.github.davemeier82.homeautomation.core.device.mqtt.MqttDeviceFactory;
 import com.github.davemeier82.homeautomation.core.device.mqtt.MqttSubscriber;
-import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
 import com.github.davemeier82.homeautomation.spring.core.event.MqttClientConnectedSpringEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +34,10 @@ public class OnFirstEventMqttDeviceLoader {
   private static final Logger log = LoggerFactory.getLogger(OnFirstEventMqttDeviceLoader.class);
   private final Map<String, MqttDeviceFactory> deviceFactories;
   private final Set<DeviceId> unknownDeviceIds = new HashSet<>();
-  private final MqttClient mqttClient;
   private final DeviceRegistry deviceRegistry;
 
-  public OnFirstEventMqttDeviceLoader(List<MqttDeviceFactory> deviceFactories, MqttClient mqttClient, DeviceRegistry deviceRegistry) {
+  public OnFirstEventMqttDeviceLoader(List<MqttDeviceFactory> deviceFactories, DeviceRegistry deviceRegistry) {
     this.deviceFactories = deviceFactories.stream().collect(toMap(MqttDeviceFactory::getRootTopic, Function.identity()));
-    this.mqttClient = mqttClient;
     this.deviceRegistry = deviceRegistry;
   }
 
