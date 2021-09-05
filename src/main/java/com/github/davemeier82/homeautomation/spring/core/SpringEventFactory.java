@@ -41,13 +41,8 @@ public class SpringEventFactory implements EventFactory {
   }
 
   @Override
-  public WindowOpenedEvent createWindowOpenedEvent(WindowSensor windowSensor, ZonedDateTime eventTime) {
-    return new WindowOpenedSpringEvent(windowSensor, eventTime);
-  }
-
-  @Override
-  public WindowClosedEvent createWindowClosedEvent(WindowSensor windowSensor, ZonedDateTime eventTime) {
-    return new WindowClosedSpringEvent(windowSensor, eventTime);
+  public WindowStateChangedEvent createWindowStateChangedEvent(WindowSensor windowSensor, DataWithTimestamp<Boolean> isOpen) {
+    return new WindowStateChangedSpringEvent(windowSensor, isOpen);
   }
 
   @Override

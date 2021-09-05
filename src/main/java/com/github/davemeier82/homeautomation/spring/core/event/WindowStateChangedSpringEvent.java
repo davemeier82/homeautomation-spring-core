@@ -17,18 +17,17 @@
 package com.github.davemeier82.homeautomation.spring.core.event;
 
 import com.github.davemeier82.homeautomation.core.device.property.WindowSensor;
-import com.github.davemeier82.homeautomation.core.event.WindowClosedEvent;
+import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
+import com.github.davemeier82.homeautomation.core.event.WindowStateChangedEvent;
 import org.springframework.context.ApplicationEvent;
 
-import java.time.ZonedDateTime;
+public class WindowStateChangedSpringEvent extends ApplicationEvent implements WindowStateChangedEvent {
 
-public class WindowClosedSpringEvent extends ApplicationEvent implements WindowClosedEvent {
+  private final DataWithTimestamp<Boolean> isOpen;
 
-  private final ZonedDateTime eventTime;
-
-  public WindowClosedSpringEvent(WindowSensor source, ZonedDateTime eventTime) {
+  public WindowStateChangedSpringEvent(WindowSensor source, DataWithTimestamp<Boolean> isOpen) {
     super(source);
-    this.eventTime = eventTime;
+    this.isOpen = isOpen;
   }
 
   @Override
@@ -37,7 +36,7 @@ public class WindowClosedSpringEvent extends ApplicationEvent implements WindowC
   }
 
   @Override
-  public ZonedDateTime getEventTime() {
-    return eventTime;
+  public DataWithTimestamp<Boolean> isOpen() {
+    return isOpen;
   }
 }
