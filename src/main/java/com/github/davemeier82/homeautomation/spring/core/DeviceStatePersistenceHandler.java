@@ -52,6 +52,11 @@ public class DeviceStatePersistenceHandler {
   }
 
   @EventListener
+  public void handleEvent(PowerChangedSpringEvent event) {
+    writeDoubleValue("power", event.getSensor().getDevice(), event.getWatt());
+  }
+
+  @EventListener
   public void handleEvent(IlluminanceChangedSpringEvent event) {
     writeIntValue("illuminance", event.getSensor().getDevice(), event.getLux());
   }
@@ -74,6 +79,13 @@ public class DeviceStatePersistenceHandler {
   }
 
   private void writeFloatValue(String category, Device device, DataWithTimestamp<Float> data) {
+    deviceStateRepository.insert(deviceIdFromDevice(device),
+        category,
+        data.getValue(),
+        data.getDateTime().toInstant());
+  }
+
+  private void writeDoubleValue(String category, Device device, DataWithTimestamp<Double> data) {
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
         data.getValue(),

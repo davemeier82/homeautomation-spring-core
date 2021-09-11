@@ -88,8 +88,12 @@ public class SpringEventFactory implements EventFactory {
   }
 
   @Override
-  public IlluminanceChangedEvent createIlluminanceChangedEvent(IlluminanceSensor sensor, DataWithTimestamp<Integer> lux
-  ) {
+  public IlluminanceChangedEvent createIlluminanceChangedEvent(IlluminanceSensor sensor, DataWithTimestamp<Integer> lux) {
     return new IlluminanceChangedSpringEvent(sensor, lux);
+  }
+
+  @Override
+  public PowerChangedEvent createPowerChangedEvent(PowerSensor sensor, DataWithTimestamp<Double> watt) {
+    return new PowerChangedSpringEvent(sensor, watt);
   }
 }
