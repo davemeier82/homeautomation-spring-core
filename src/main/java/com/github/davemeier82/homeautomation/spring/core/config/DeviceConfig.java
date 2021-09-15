@@ -20,17 +20,27 @@ package com.github.davemeier82.homeautomation.spring.core.config;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
+import static java.util.Objects.requireNonNullElseGet;
+
 public class DeviceConfig {
 
   private final String type;
   private final String displayName;
   private final String id;
+  private final Map<String, String> parameters;
 
   @JsonCreator
-  public DeviceConfig(@JsonProperty("type") String type, @JsonProperty("displayName") String displayName, @JsonProperty("id") String id) {
+  public DeviceConfig(@JsonProperty(value = "type", required = true) String type,
+                      @JsonProperty("displayName") String displayName,
+                      @JsonProperty(value = "id", required = true) String id,
+                      @JsonProperty("parameters") Map<String, String> parameters
+  ) {
     this.type = type;
     this.displayName = displayName;
     this.id = id;
+    this.parameters = requireNonNullElseGet(parameters, Map::of);
   }
 
   public String getType() {
@@ -43,5 +53,9 @@ public class DeviceConfig {
 
   public String getId() {
     return id;
+  }
+
+  public Map<String, String> getParameters() {
+    return parameters;
   }
 }

@@ -36,7 +36,7 @@ public class SpringEventFactory implements EventFactory {
   }
 
   @Override
-  public RelayStateChangedEvent createRelayStateChangedEvent(Relay relay, DataWithTimestamp<Boolean> isOn) {
+  public RelayStateChangedEvent createRelayStateChangedEvent(ReadOnlyRelay relay, DataWithTimestamp<Boolean> isOn) {
     return new RelayStateChangedSpringEvent(relay, isOn);
   }
 

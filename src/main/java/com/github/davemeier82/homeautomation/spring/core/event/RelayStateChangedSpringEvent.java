@@ -16,6 +16,7 @@
 
 package com.github.davemeier82.homeautomation.spring.core.event;
 
+import com.github.davemeier82.homeautomation.core.device.property.ReadOnlyRelay;
 import com.github.davemeier82.homeautomation.core.device.property.Relay;
 import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
 import com.github.davemeier82.homeautomation.core.event.RelayStateChangedEvent;
@@ -25,7 +26,7 @@ public class RelayStateChangedSpringEvent extends ApplicationEvent implements Re
 
   private final DataWithTimestamp<Boolean> isOn;
 
-  public RelayStateChangedSpringEvent(Relay relay, DataWithTimestamp<Boolean> isOn) {
+  public RelayStateChangedSpringEvent(ReadOnlyRelay relay, DataWithTimestamp<Boolean> isOn) {
     super(relay);
     this.isOn = isOn;
   }

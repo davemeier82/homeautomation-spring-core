@@ -88,7 +88,7 @@ public class DeviceConfigWriter {
   }
 
   private DeviceConfig toConfig(Device device) {
-    return new DeviceConfig(device.getType(), device.getDisplayName(), device.getId());
+    return new DeviceConfig(device.getType(), device.getDisplayName(), device.getId(), device.getParameters());
   }
 
 }

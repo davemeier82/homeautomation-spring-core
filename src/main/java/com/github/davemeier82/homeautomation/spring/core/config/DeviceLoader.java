@@ -79,7 +79,7 @@ public class DeviceLoader {
       if (deviceFactory == null) {
         throw new RuntimeException("failed to load device of type " + deviceConfig.getType());
       }
-      return deviceFactory.createDevice(deviceConfig.getType(), deviceConfig.getId(), deviceConfig.getDisplayName());
+      return deviceFactory.createDevice(deviceConfig.getType(), deviceConfig.getId(), deviceConfig.getDisplayName(), deviceConfig.getParameters());
     }).collect(toList());
     eventPublisher.publishEvent(eventFactory.createDevicesLoadedEvent(this));
     return devices;
