@@ -17,7 +17,6 @@
 package com.github.davemeier82.homeautomation.spring.core.event;
 
 import com.github.davemeier82.homeautomation.core.device.property.ReadOnlyRelay;
-import com.github.davemeier82.homeautomation.core.device.property.Relay;
 import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
 import com.github.davemeier82.homeautomation.core.event.RelayStateChangedEvent;
 import org.springframework.context.ApplicationEvent;
@@ -32,8 +31,8 @@ public class RelayStateChangedSpringEvent extends ApplicationEvent implements Re
   }
 
   @Override
-  public Relay getRelay() {
-    return (Relay) getSource();
+  public ReadOnlyRelay getRelay() {
+    return (ReadOnlyRelay) getSource();
   }
 
   @Override
