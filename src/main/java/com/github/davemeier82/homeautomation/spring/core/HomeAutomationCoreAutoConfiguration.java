@@ -18,19 +18,21 @@ package com.github.davemeier82.homeautomation.spring.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.davemeier82.homeautomation.core.DeviceStateRepository;
-import com.github.davemeier82.homeautomation.core.PushNotificationService;
 import com.github.davemeier82.homeautomation.core.device.DeviceFactory;
 import com.github.davemeier82.homeautomation.core.event.EventFactory;
 import com.github.davemeier82.homeautomation.core.event.EventPublisher;
 import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
 import com.github.davemeier82.homeautomation.spring.core.config.DeviceConfigWriter;
 import com.github.davemeier82.homeautomation.spring.core.config.DeviceLoader;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover.PushoverConfiguration;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover.PushoverNotificationServiceFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -47,16 +49,23 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @AutoConfigureOrder(LOWEST_PRECEDENCE)
+@EnableConfigurationProperties(PushoverConfiguration.class)
 public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
-  @ConditionalOnClass(PushoverService.class)
-  @ConditionalOnMissingBean
-  PushNotificationService pushNotificationService(RestOperations restOperations,
-                                                  @Value("${pushover.user}") String user,
-                                                  @Value("${pushover.token}") String token
+  @ConditionalOnProperty(prefix = "pushover", name = "enabled", havingValue = "true")
+  PushoverNotificationServiceFactory pushoverNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                                                        RestOperations restOperations,
+                                                                        PushoverConfiguration pushoverConfiguration
   ) {
-    return new PushoverService(restOperations, user, token);
+    return new PushoverNotificationServiceFactory(pushNotificationServiceRegistry, restOperations, pushoverConfiguration);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnProperty(prefix = "push-notification", name = "enabled", havingValue = "true")
+  PushNotificationServiceRegistry pushNotificationServiceRegistry() {
+    return new PushNotificationServiceRegistry();
   }
 
   @Bean

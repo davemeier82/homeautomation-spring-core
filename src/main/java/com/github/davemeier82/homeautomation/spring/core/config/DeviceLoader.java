@@ -80,7 +80,7 @@ public class DeviceLoader {
         throw new RuntimeException("failed to load device of type " + deviceConfig.getType());
       }
       return deviceFactory.createDevice(deviceConfig.getType(), deviceConfig.getId(), deviceConfig.getDisplayName(), deviceConfig.getParameters());
-    }).collect(toList());
+    }).toList();
     eventPublisher.publishEvent(eventFactory.createDevicesLoadedEvent(this));
     return devices;
   }

@@ -74,7 +74,7 @@ public class DeviceConfigWriter {
       }
       List<DeviceConfig> deviceConfigs = deviceRegistry.getDevices().stream()
           .map(this::toConfig)
-          .collect(toList());
+          .toList();
       Files.writeString(configFilePath,
           objectMapper.writerWithDefaultPrettyPrinter()
               .writeValueAsString(new DevicesConfig(DevicesConfig.CURRENT_VERSION, deviceConfigs)),
