@@ -25,6 +25,8 @@ import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
 import com.github.davemeier82.homeautomation.spring.core.config.DeviceConfigWriter;
 import com.github.davemeier82.homeautomation.spring.core.config.DeviceLoader;
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet.PushbulletConfiguration;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet.PushbulletNotificationServiceFactory;
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover.PushoverConfiguration;
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover.PushoverNotificationServiceFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,14 +35,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.web.client.RestOperations;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -49,16 +50,25 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @AutoConfigureOrder(LOWEST_PRECEDENCE)
-@EnableConfigurationProperties(PushoverConfiguration.class)
+@EnableConfigurationProperties({PushoverConfiguration.class, PushbulletConfiguration.class})
 public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnProperty(prefix = "pushover", name = "enabled", havingValue = "true")
   PushoverNotificationServiceFactory pushoverNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
-                                                                        RestOperations restOperations,
+                                                                        WebClient webClient,
                                                                         PushoverConfiguration pushoverConfiguration
   ) {
-    return new PushoverNotificationServiceFactory(pushNotificationServiceRegistry, restOperations, pushoverConfiguration);
+    return new PushoverNotificationServiceFactory(pushNotificationServiceRegistry, webClient, pushoverConfiguration);
+  }
+
+  @Bean
+  @ConditionalOnProperty(prefix = "pushbullet", name = "enabled", havingValue = "true")
+  PushbulletNotificationServiceFactory pushbulletNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                                                            WebClient webClient,
+                                                                            PushbulletConfiguration pushbulletConfiguration
+  ) {
+    return new PushbulletNotificationServiceFactory(pushNotificationServiceRegistry, webClient, pushbulletConfiguration);
   }
 
   @Bean
@@ -95,8 +105,8 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  RestOperations restOperations(RestTemplateBuilder builder) {
-    return builder.build();
+  WebClient webClient() {
+    return WebClient.create();
   }
 
   @Bean

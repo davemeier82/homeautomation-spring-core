@@ -14,40 +14,36 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
+package com.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
 import com.github.davemeier82.homeautomation.core.PushNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
-import java.net.URI;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-public class PushoverService implements PushNotificationService {
-  private static final Logger log = LoggerFactory.getLogger(PushoverService.class);
-  private static final URI PUSHOVER_URI = URI.create("https://api.pushover.net/1/messages.json");
+public class PushbulletService implements PushNotificationService {
+
+  private static final Logger log = LoggerFactory.getLogger(PushbulletService.class);
+  private static final String PUSHBULLET_URI = "https://api.pushbullet.com/v2/pushes";
   private final WebClient webClient;
-  private final String user;
   private final String token;
 
-  public PushoverService(WebClient webClient, String user, String token) {
+  public PushbulletService(WebClient webClient, String token) {
     this.webClient = webClient;
-    this.user = user;
     this.token = token;
   }
 
   @Override
   public void sendTextMessage(String title, String message) {
-    URI uri = UriComponentsBuilder.newInstance().uri(PUSHOVER_URI)
-        .queryParam("token", token)
-        .queryParam("user", user)
-        .queryParam("message", message)
-        .queryParam("title", title)
-        .build().toUri();
     webClient.post()
-        .uri(uri)
-        .retrieve().bodyToMono(String.class).subscribe(log::trace);
+        .uri(PUSHBULLET_URI)
+        .header("Access-Token", token)
+        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .body(Mono.just(new PushbulletNote(title, message)), PushbulletNote.class).retrieve().bodyToMono(String.class).subscribe(log::trace);
   }
 
 }

@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
+package com.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
 import org.springframework.web.reactive.function.client.WebClient;
 
-public class PushoverNotificationServiceFactory {
+public class PushbulletNotificationServiceFactory {
 
   private final PushNotificationServiceRegistry pushNotificationServiceRegistry;
   private final WebClient webClient;
 
-  public PushoverNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
-                                            WebClient webClient,
-                                            PushoverConfiguration pushoverConfiguration
+  public PushbulletNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                              WebClient webClient,
+                                              PushbulletConfiguration pushbulletConfiguration
   ) {
     this.pushNotificationServiceRegistry = pushNotificationServiceRegistry;
     this.webClient = webClient;
-    pushoverConfiguration.credentials().forEach(credential -> createAndAddToRegistry(credential.id(), credential.user(), credential.token()));
+    pushbulletConfiguration.credentials().forEach(credential -> createAndAddToRegistry(credential.id(), credential.token()));
   }
 
-  public PushoverService create(String user, String token) {
-    return new PushoverService(webClient, user, token);
+  public PushbulletService create(String token) {
+    return new PushbulletService(webClient, token);
   }
 
-  public void createAndAddToRegistry(String id, String user, String token) {
-    pushNotificationServiceRegistry.add(id, create(user, token));
+  public void createAndAddToRegistry(String id, String token) {
+    pushNotificationServiceRegistry.add(id, create(token));
   }
 
 }
