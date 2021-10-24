@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core;
+package com.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
 
 import com.github.davemeier82.homeautomation.core.PushNotificationService;
 import org.springframework.web.client.RestOperations;
