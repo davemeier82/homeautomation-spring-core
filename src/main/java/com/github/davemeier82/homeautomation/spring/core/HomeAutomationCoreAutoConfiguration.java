@@ -19,11 +19,15 @@ package com.github.davemeier82.homeautomation.spring.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.davemeier82.homeautomation.core.DeviceStateRepository;
 import com.github.davemeier82.homeautomation.core.device.DeviceFactory;
-import com.github.davemeier82.homeautomation.core.event.EventFactory;
 import com.github.davemeier82.homeautomation.core.event.EventPublisher;
+import com.github.davemeier82.homeautomation.core.event.factory.DefaultEventFactory;
+import com.github.davemeier82.homeautomation.core.event.factory.EventFactory;
 import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
-import com.github.davemeier82.homeautomation.spring.core.config.DeviceConfigWriter;
-import com.github.davemeier82.homeautomation.spring.core.config.DeviceLoader;
+import com.github.davemeier82.homeautomation.spring.core.config.device.DeviceConfigWriter;
+import com.github.davemeier82.homeautomation.spring.core.config.device.DeviceLoader;
+import com.github.davemeier82.homeautomation.spring.core.config.notification.NotificationConfigLoader;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.DefaultPushNotificationSender;
+import com.github.davemeier82.homeautomation.spring.core.pushnotification.DefaultPushNotificationServiceRegistry;
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet.PushbulletConfiguration;
 import com.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet.PushbulletNotificationServiceFactory;
@@ -36,16 +40,19 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.file.Path;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
@@ -73,9 +80,18 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  @ConditionalOnProperty(prefix = "push-notification", name = "enabled", havingValue = "true")
+  @ConditionalOnProperty(prefix = "notification.push", name = "enabled", havingValue = "true")
   PushNotificationServiceRegistry pushNotificationServiceRegistry() {
-    return new PushNotificationServiceRegistry();
+    return new DefaultPushNotificationServiceRegistry();
+  }
+
+  @Bean
+  @ConditionalOnProperty(prefix = "notification.push.default-sender", name = "enabled", havingValue = "true")
+  DefaultPushNotificationSender defaultPushNotificationSender(PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                                              MessageSource pushNotificationMessageSource,
+                                                              @Value("${notification.push.translation.properties.baseName:defaultLocale:en}") String defaultLocale
+  ) {
+    return new DefaultPushNotificationSender(pushNotificationServiceRegistry, pushNotificationMessageSource, defaultLocale);
   }
 
   @Bean
@@ -88,7 +104,7 @@ public class HomeAutomationCoreAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   EventFactory eventFactory() {
-    return new SpringEventFactory();
+    return new DefaultEventFactory();
   }
 
   @Bean
@@ -127,8 +143,8 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  @ConditionalOnProperty(name = "config.location")
-  DeviceLoader deviceLoader(@Value("${config.location}") String configPath,
+  @ConditionalOnProperty(prefix = "device.config", name = "location")
+  DeviceLoader deviceLoader(@Value("${device.config.location}") String configPath,
                             ObjectMapper objectMapper,
                             Set<DeviceFactory> deviceFactories,
                             EventFactory eventFactory,
@@ -139,8 +155,11 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  @ConditionalOnProperty(name = "config.writer.enabled", havingValue = "true")
-  DeviceConfigWriter deviceConfigWriter(DeviceRegistry deviceRegistry, ObjectMapper objectMapper, @Value("${config.location}") String configPath) {
+  @ConditionalOnProperty(prefix = "config.writer", name = "enabled", havingValue = "true")
+  DeviceConfigWriter deviceConfigWriter(DeviceRegistry deviceRegistry,
+                                        ObjectMapper objectMapper,
+                                        @Value("${device.config.location}") String configPath
+  ) {
     return new DeviceConfigWriter(deviceRegistry, objectMapper, Path.of(configPath));
   }
 
@@ -148,5 +167,25 @@ public class HomeAutomationCoreAutoConfiguration {
   @ConditionalOnBean(DeviceStateRepository.class)
   DeviceStatePersistenceHandler deviceStatePersistenceHandler(DeviceStateRepository deviceStateRepository) {
     return new DeviceStatePersistenceHandler(deviceStateRepository);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  MessageSource pushNotificationMessageSource(@Value("${notification.push.translation.properties.baseName:device-property-message}") String baseName) {
+    ResourceBundleMessageSource rs = new ResourceBundleMessageSource();
+    rs.setBasename(baseName);
+    rs.setDefaultEncoding(UTF_8.name());
+    rs.setUseCodeAsDefaultMessage(true);
+    return rs;
+  }
+
+  @Bean
+  @ConditionalOnProperty(prefix = "notification.config", name = "location")
+  NotificationConfigLoader notificationConfigLoader(@Value("${notification.config.location}") String configPath,
+                                                    PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                                    EventFactory eventFactory,
+                                                    ObjectMapper objectMapper
+  ) {
+    return new NotificationConfigLoader(Path.of(configPath), pushNotificationServiceRegistry, eventFactory, objectMapper);
   }
 }

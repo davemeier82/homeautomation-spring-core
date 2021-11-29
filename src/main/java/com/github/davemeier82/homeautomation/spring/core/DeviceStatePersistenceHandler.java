@@ -19,7 +19,7 @@ package com.github.davemeier82.homeautomation.spring.core;
 import com.github.davemeier82.homeautomation.core.DeviceStateRepository;
 import com.github.davemeier82.homeautomation.core.device.Device;
 import com.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
-import com.github.davemeier82.homeautomation.spring.core.event.*;
+import com.github.davemeier82.homeautomation.core.event.defaults.*;
 import org.springframework.context.event.EventListener;
 
 import static com.github.davemeier82.homeautomation.core.device.DeviceId.deviceIdFromDevice;
@@ -32,43 +32,43 @@ public class DeviceStatePersistenceHandler {
   }
 
   @EventListener
-  public void handleEvent(BatteryLevelChangedSpringEvent event) {
-    writeIntValue("battery", event.getSensor().getDevice(), event.getBatteryLevelInPercent());
+  public void handleEvent(DefaultBatteryLevelChangedPropertyEvent event) {
+    writeIntValue("battery", event.getDeviceProperty().getDevice(), event.getBatteryLevelInPercent());
   }
 
   @EventListener
-  public void handleEvent(DimmingLevelChangedSpringEvent event) {
-    writeIntValue("dimmer", event.getDimmer().getDevice(), event.getDimmingLevelInPercent());
+  public void handleEvent(DefaultDimmingLevelChangedPropertyEvent event) {
+    writeIntValue("dimmer", event.getDeviceProperty().getDevice(), event.getDimmingLevelInPercent());
   }
 
   @EventListener
-  public void handleEvent(HumidityChangedSpringEvent event) {
-    writeFloatValue("humidity", event.getSensor().getDevice(), event.getRelativeHumidityInPercent());
+  public void handleEvent(DefaultHumidityChangedPropertyEvent event) {
+    writeFloatValue("humidity", event.getDeviceProperty().getDevice(), event.getRelativeHumidityInPercent());
   }
 
   @EventListener
-  public void handleEvent(TemperatureChangedSpringEvent event) {
-    writeFloatValue("temperature", event.getSensor().getDevice(), event.getTemperatureInDegree());
+  public void handleEvent(DefaultTemperatureChangedPropertyEvent event) {
+    writeFloatValue("temperature", event.getDeviceProperty().getDevice(), event.getTemperatureInDegree());
   }
 
   @EventListener
-  public void handleEvent(PowerChangedSpringEvent event) {
-    writeDoubleValue("power", event.getSensor().getDevice(), event.getWatt());
+  public void handleEvent(DefaultPowerChangedPropertyEvent event) {
+    writeDoubleValue("power", event.getDeviceProperty().getDevice(), event.getWatt());
   }
 
   @EventListener
-  public void handleEvent(IlluminanceChangedSpringEvent event) {
-    writeIntValue("illuminance", event.getSensor().getDevice(), event.getLux());
+  public void handleEvent(DefaultIlluminanceChangedPropertyEvent event) {
+    writeIntValue("illuminance", event.getDeviceProperty().getDevice(), event.getLux());
   }
 
   @EventListener
-  public void handleEvent(RelayStateChangedSpringEvent event) {
-    writeBooleanValue("relay", event.getRelay().getDevice(), event.isOn());
+  public void handleEvent(DefaultRelayStateChangedPropertyEvent event) {
+    writeBooleanValue("relay", event.getDeviceProperty().getDevice(), event.isOn());
   }
 
   @EventListener
-  public void handleEvent(WindowStateChangedSpringEvent event) {
-    writeBooleanValue("window", event.getWindow().getDevice(), event.isOpen());
+  public void handleEvent(DefaultWindowStateChangedPropertyEvent event) {
+    writeBooleanValue("window", event.getDevice(), event.isOpen());
   }
 
   private void writeIntValue(String category, Device device, DataWithTimestamp<Integer> data) {

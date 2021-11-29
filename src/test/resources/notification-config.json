@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "push": [
+    {
+      "serviceId": "service1",
+      "events": [
+        {
+          "type": "WindowStateChangedEvent",
+          "deviceIds": [
+            {
+              "id": "abc",
+              "type": "typeX"
+            },
+            {
+              "id": "123",
+              "type": "typeZ"
+            }
+          ]
+        },
+        {
+          "type": "NewDeviceCreatedEvent"
+        }
+      ]
+    },
+    {
+      "serviceId": "service2",
+      "events": [
+        {
+          "type": "org.springframework.boot.context.event.ApplicationReadyEvent"
+        }
+      ]
+    }
+  ]
+}

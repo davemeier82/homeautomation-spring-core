@@ -14,31 +14,18 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.config;
+package com.github.davemeier82.homeautomation.spring.core.config.notification;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class DevicesConfig {
-
-  public static final String CURRENT_VERSION = "1.0";
-
-  private final String version;
-  private final List<DeviceConfig> devices;
+public record PushNotificationConfig(String serviceId, List<PushNotificationEventConfig> events) {
 
   @JsonCreator
-  public DevicesConfig(@JsonProperty("version") String version, @JsonProperty("devices") List<DeviceConfig> devices) {
-    this.version = version;
-    this.devices = devices;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public List<DeviceConfig> getDevices() {
-    return devices;
+  public PushNotificationConfig(@JsonProperty("serviceId") String serviceId, @JsonProperty("events") List<PushNotificationEventConfig> events) {
+    this.serviceId = serviceId;
+    this.events = events;
   }
 }

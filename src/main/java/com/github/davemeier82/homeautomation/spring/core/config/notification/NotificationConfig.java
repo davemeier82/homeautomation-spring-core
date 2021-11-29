@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.event;
+package com.github.davemeier82.homeautomation.spring.core.config.notification;
 
-import com.github.davemeier82.homeautomation.core.event.MqttClientConnectedEvent;
-import com.github.davemeier82.homeautomation.core.mqtt.MqttClient;
-import org.springframework.context.ApplicationEvent;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MqttClientConnectedSpringEvent extends ApplicationEvent implements MqttClientConnectedEvent {
-  public MqttClientConnectedSpringEvent(MqttClient source) {
-    super(source);
-  }
+import java.util.List;
 
-  @Override
-  public MqttClient getClient() {
-    return (MqttClient) getSource();
+public record NotificationConfig(String version, List<PushNotificationConfig> pushNotificationConfigs) {
+
+  @JsonCreator
+  public NotificationConfig(@JsonProperty("version") String version, @JsonProperty("push") List<PushNotificationConfig> pushNotificationConfigs) {
+    this.version = version;
+    this.pushNotificationConfigs = pushNotificationConfigs;
   }
 }

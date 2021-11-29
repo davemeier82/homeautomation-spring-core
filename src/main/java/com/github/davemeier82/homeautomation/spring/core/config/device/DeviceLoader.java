@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.config;
+package com.github.davemeier82.homeautomation.spring.core.config.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.davemeier82.homeautomation.core.device.Device;
 import com.github.davemeier82.homeautomation.core.device.DeviceFactory;
-import com.github.davemeier82.homeautomation.core.event.EventFactory;
 import com.github.davemeier82.homeautomation.core.event.EventPublisher;
+import com.github.davemeier82.homeautomation.core.event.factory.EventFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 public class DeviceLoader {
@@ -75,20 +74,20 @@ public class DeviceLoader {
 
   public List<Device> load() {
     List<Device> devices = loadDeviceConfigs().stream().map(deviceConfig -> {
-      DeviceFactory deviceFactory = deviceTypeToFactory.get(deviceConfig.getType());
+      DeviceFactory deviceFactory = deviceTypeToFactory.get(deviceConfig.type());
       if (deviceFactory == null) {
-        throw new RuntimeException("failed to load device of type " + deviceConfig.getType());
+        throw new RuntimeException("failed to load device of type " + deviceConfig.type());
       }
-      return deviceFactory.createDevice(deviceConfig.getType(), deviceConfig.getId(), deviceConfig.getDisplayName(), deviceConfig.getParameters());
+      return deviceFactory.createDevice(deviceConfig.type(), deviceConfig.id(), deviceConfig.displayName(), deviceConfig.parameters());
     }).toList();
-    eventPublisher.publishEvent(eventFactory.createDevicesLoadedEvent(this));
+    eventPublisher.publishEvent(eventFactory.createDevicesLoadedEvent(devices));
     return devices;
   }
 
   private List<DeviceConfig> loadDeviceConfigs() {
     if (Files.exists(configFilePath)) {
       try {
-        return objectMapper.readValue(configFilePath.toFile(), DevicesConfig.class).getDevices();
+        return objectMapper.readValue(configFilePath.toFile(), DevicesConfig.class).devices();
       } catch (IOException e) {
         throw new UncheckedIOException(e);
       }

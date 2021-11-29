@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.event;
+package com.github.davemeier82.homeautomation.spring.core.config.device;
 
-import com.github.davemeier82.homeautomation.core.device.Device;
-import com.github.davemeier82.homeautomation.core.event.NewDeviceCreatedEvent;
-import org.springframework.context.ApplicationEvent;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class NewDeviceCreatedSpringEvent extends ApplicationEvent implements NewDeviceCreatedEvent {
+import java.util.List;
 
-  public NewDeviceCreatedSpringEvent(Device source) {
-    super(source);
-  }
+public record DevicesConfig(String version, List<DeviceConfig> devices) {
 
-  @Override
-  public Device getDevice() {
-    return (Device) source;
+  public static final String CURRENT_VERSION = "1.0";
+
+  @JsonCreator
+  public DevicesConfig(@JsonProperty("version") String version, @JsonProperty("devices") List<DeviceConfig> devices) {
+    this.version = version;
+    this.devices = devices;
   }
 }

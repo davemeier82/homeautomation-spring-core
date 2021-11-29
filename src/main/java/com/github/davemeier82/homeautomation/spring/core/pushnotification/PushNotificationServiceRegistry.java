@@ -17,26 +17,26 @@
 package com.github.davemeier82.homeautomation.spring.core.pushnotification;
 
 import com.github.davemeier82.homeautomation.core.PushNotificationService;
+import com.github.davemeier82.homeautomation.core.device.DeviceId;
+import com.github.davemeier82.homeautomation.core.event.DevicePropertyEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-public class PushNotificationServiceRegistry {
+public interface PushNotificationServiceRegistry {
 
-  private final Map<String, PushNotificationService> idToService = new HashMap<>();
+  void add(String id, PushNotificationService pushNotificationService);
 
-  public Set<PushNotificationService> getAll() {
-    return new HashSet<>(idToService.values());
-  }
+  void registerToEvent(Class<? extends DevicePropertyEvent> event, String serviceId, List<DeviceId> deviceIds);
 
-  public PushNotificationService getById(String id) {
-    return idToService.get(id);
-  }
+  void registerToEvent(Class<?> event, String serviceId);
 
-  public void add(String id, PushNotificationService pushNotificationService) {
-    idToService.put(id, pushNotificationService);
-  }
+  Optional<PushNotificationService> getById(String id);
 
+  Set<PushNotificationService> getBy(Class<? extends DevicePropertyEvent> event, DeviceId deviceId);
+
+  Set<PushNotificationService> getBy(Class<?> event);
+
+  Set<PushNotificationService> getAll();
 }

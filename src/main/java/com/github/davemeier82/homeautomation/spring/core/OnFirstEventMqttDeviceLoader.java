@@ -19,7 +19,7 @@ package com.github.davemeier82.homeautomation.spring.core;
 import com.github.davemeier82.homeautomation.core.device.DeviceId;
 import com.github.davemeier82.homeautomation.core.device.mqtt.MqttDeviceFactory;
 import com.github.davemeier82.homeautomation.core.device.mqtt.MqttSubscriber;
-import com.github.davemeier82.homeautomation.spring.core.event.MqttClientConnectedSpringEvent;
+import com.github.davemeier82.homeautomation.core.event.defaults.DefaultMqttClientConnectedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -42,7 +42,7 @@ public class OnFirstEventMqttDeviceLoader {
   }
 
   @EventListener
-  public void loadDevices(MqttClientConnectedSpringEvent event) {
+  public void loadDevices(DefaultMqttClientConnectedEvent event) {
     deviceFactories.forEach((rootTopic, factory) -> {
       log.debug("subscribing for topic '{}' with factory '{}'", rootTopic, factory.getClass().getSimpleName());
       event.getClient().subscribe(rootTopic + "#", (topic, byteBuffer) -> createDevice(topic, factory, byteBuffer));

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.config;
+package com.github.davemeier82.homeautomation.spring.core.config.device;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,12 +24,7 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNullElseGet;
 
-public class DeviceConfig {
-
-  private final String type;
-  private final String displayName;
-  private final String id;
-  private final Map<String, String> parameters;
+public record DeviceConfig(String type, String displayName, String id, Map<String, String> parameters) {
 
   @JsonCreator
   public DeviceConfig(@JsonProperty(value = "type", required = true) String type,
@@ -43,19 +38,4 @@ public class DeviceConfig {
     this.parameters = requireNonNullElseGet(parameters, Map::of);
   }
 
-  public String getType() {
-    return type;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public Map<String, String> getParameters() {
-    return parameters;
-  }
 }

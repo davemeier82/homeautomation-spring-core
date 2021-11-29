@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.event;
+package com.github.davemeier82.homeautomation.spring.core.config.notification;
 
-import com.github.davemeier82.homeautomation.core.event.DevicesLoadedEvent;
-import org.springframework.context.ApplicationEvent;
+import com.github.davemeier82.homeautomation.core.device.DeviceId;
 
-public class DevicesLoadedSpringEvent extends ApplicationEvent implements DevicesLoadedEvent {
+import java.util.List;
 
-  public DevicesLoadedSpringEvent(Object source) {
-    super(source);
-  }
-
+public record PushNotificationEventConfig(String type, List<DeviceId> deviceIds) {
 }

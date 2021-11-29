@@ -18,7 +18,7 @@ package com.github.davemeier82.homeautomation.spring.core;
 
 import com.github.davemeier82.homeautomation.core.device.Device;
 import com.github.davemeier82.homeautomation.core.device.DeviceId;
-import com.github.davemeier82.homeautomation.spring.core.event.NewDeviceCreatedSpringEvent;
+import com.github.davemeier82.homeautomation.core.event.defaults.DefaultNewDeviceCreatedEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.Map;
@@ -41,7 +41,7 @@ public class DeviceRegistry {
   }
 
   @EventListener
-  void onDeviceCreated(NewDeviceCreatedSpringEvent event) {
+  void onDeviceCreated(DefaultNewDeviceCreatedEvent event) {
     DeviceId deviceId = deviceIdFromDevice(event.getDevice());
     devices.putIfAbsent(deviceId, event.getDevice());
   }

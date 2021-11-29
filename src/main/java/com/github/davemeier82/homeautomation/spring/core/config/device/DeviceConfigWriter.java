@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.davemeier82.homeautomation.spring.core.config;
+package com.github.davemeier82.homeautomation.spring.core.config.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.davemeier82.homeautomation.core.device.Device;
+import com.github.davemeier82.homeautomation.core.event.defaults.DefaultDevicesLoadedEvent;
+import com.github.davemeier82.homeautomation.core.event.defaults.DefaultNewDeviceCreatedEvent;
 import com.github.davemeier82.homeautomation.spring.core.DeviceRegistry;
-import com.github.davemeier82.homeautomation.spring.core.event.DevicesLoadedSpringEvent;
-import com.github.davemeier82.homeautomation.spring.core.event.NewDeviceCreatedSpringEvent;
 import org.springframework.context.event.EventListener;
 
 import java.io.IOException;
@@ -34,7 +34,6 @@ import static java.nio.file.Files.createFile;
 import static java.nio.file.Files.notExists;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static java.util.stream.Collectors.toList;
 
 public class DeviceConfigWriter {
 
@@ -51,14 +50,14 @@ public class DeviceConfigWriter {
   }
 
   @EventListener
-  void onDeviceCreated(NewDeviceCreatedSpringEvent event) {
+  void onDeviceCreated(DefaultNewDeviceCreatedEvent event) {
     if (enabled) {
       save();
     }
   }
 
   @EventListener
-  void onDevicesLoaded(DevicesLoadedSpringEvent event) {
+  void onDevicesLoaded(DefaultDevicesLoadedEvent event) {
     enabled = true;
   }
 
