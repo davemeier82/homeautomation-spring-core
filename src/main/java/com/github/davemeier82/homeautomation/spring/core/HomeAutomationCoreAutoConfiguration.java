@@ -89,7 +89,7 @@ public class HomeAutomationCoreAutoConfiguration {
   @ConditionalOnProperty(prefix = "notification.push.default-sender", name = "enabled", havingValue = "true")
   DefaultPushNotificationSender defaultPushNotificationSender(PushNotificationServiceRegistry pushNotificationServiceRegistry,
                                                               MessageSource pushNotificationMessageSource,
-                                                              @Value("${notification.push.translation.properties.baseName:defaultLocale:en}") String defaultLocale
+                                                              @Value("${notification.push.translation.properties.defaultLocale:en}") String defaultLocale
   ) {
     return new DefaultPushNotificationSender(pushNotificationServiceRegistry, pushNotificationMessageSource, defaultLocale);
   }
