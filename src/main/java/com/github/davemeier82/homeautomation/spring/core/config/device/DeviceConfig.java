@@ -24,18 +24,20 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNullElseGet;
 
-public record DeviceConfig(String type, String displayName, String id, Map<String, String> parameters) {
+public record DeviceConfig(String type, String displayName, String id, Map<String, String> parameters, Map<String, String> customIdentifiers) {
 
   @JsonCreator
   public DeviceConfig(@JsonProperty(value = "type", required = true) String type,
                       @JsonProperty("displayName") String displayName,
                       @JsonProperty(value = "id", required = true) String id,
-                      @JsonProperty("parameters") Map<String, String> parameters
+                      @JsonProperty("parameters") Map<String, String> parameters,
+                      @JsonProperty("customIdentifiers") Map<String, String> customIdentifiers
   ) {
     this.type = type;
     this.displayName = displayName;
     this.id = id;
     this.parameters = requireNonNullElseGet(parameters, Map::of);
+    this.customIdentifiers = customIdentifiers;
   }
 
 }
