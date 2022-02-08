@@ -60,6 +60,6 @@ class DefaultPushNotificationServiceRegistryTest {
     when(windowSensor.getDevice()).thenReturn(device);
     when(device.getId()).thenReturn(DEVICE_ID);
     when(device.getType()).thenReturn(DEVICE_TYPE);
-    return defaultEventFactory.createWindowStateChangedEvent(windowSensor, new DataWithTimestamp<>(true));
+    return defaultEventFactory.createWindowStateChangedEvent(windowSensor, new DataWithTimestamp<>(true), null);
   }
 }

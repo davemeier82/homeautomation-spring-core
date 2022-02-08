@@ -41,8 +41,10 @@ public class DefaultPushNotificationSender {
 
   @EventListener
   public void handleEvent(DevicePropertyEvent event) {
-    registry.getBy(event.getClass(), DeviceId.deviceIdFromDevice(event.getDeviceProperty().getDevice()))
-        .forEach(service -> service.sendTextMessage(event.getDeviceProperty().getDevice().getDisplayName(), translate(event)));
+    if (!event.wasPreviousValueNull()) {
+      registry.getBy(event.getClass(), DeviceId.deviceIdFromDevice(event.getDeviceProperty().getDevice()))
+          .forEach(service -> service.sendTextMessage(event.getDeviceProperty().getDevice().getDisplayName(), translate(event)));
+    }
   }
 
   @EventListener
