@@ -19,7 +19,9 @@ package io.github.davemeier82.homeautomation.spring.core;
 import io.github.davemeier82.homeautomation.core.device.DeviceId;
 import io.github.davemeier82.homeautomation.core.device.mqtt.MqttDeviceFactory;
 import io.github.davemeier82.homeautomation.core.device.mqtt.MqttSubscriber;
-import io.github.davemeier82.homeautomation.core.event.defaults.DefaultMqttClientConnectedEvent;
+import io.github.davemeier82.homeautomation.core.event.EventPublisher;
+import io.github.davemeier82.homeautomation.core.event.MqttClientConnectedEvent;
+import io.github.davemeier82.homeautomation.core.event.factory.EventFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -30,19 +32,48 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Listens to the MQTT messages and tries to create new devices. This is helpful to create the initial
+ * {@link io.github.davemeier82.homeautomation.spring.core.config.device.DevicesConfig} without manually typing it.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class OnFirstEventMqttDeviceLoader {
   private static final Logger log = LoggerFactory.getLogger(OnFirstEventMqttDeviceLoader.class);
   private final Map<String, MqttDeviceFactory> deviceFactories;
   private final Set<DeviceId> unknownDeviceIds = new HashSet<>();
   private final DeviceRegistry deviceRegistry;
+  private final EventPublisher eventPublisher;
+  private final EventFactory eventFactory;
 
-  public OnFirstEventMqttDeviceLoader(List<MqttDeviceFactory> deviceFactories, DeviceRegistry deviceRegistry) {
+  /**
+   * Constructor.
+   *
+   * @param deviceFactories the device factories
+   * @param deviceRegistry  the device registry
+   * @param eventPublisher  the event publisher
+   * @param eventFactory    the event factory
+   */
+  public OnFirstEventMqttDeviceLoader(List<MqttDeviceFactory> deviceFactories,
+                                      DeviceRegistry deviceRegistry,
+                                      EventPublisher eventPublisher,
+                                      EventFactory eventFactory
+  ) {
     this.deviceFactories = deviceFactories.stream().collect(toMap(MqttDeviceFactory::getRootTopic, Function.identity()));
     this.deviceRegistry = deviceRegistry;
+    this.eventPublisher = eventPublisher;
+    this.eventFactory = eventFactory;
   }
 
+  /**
+   * When the MQTT client is connected it listens to all topics supported by the {@link MqttDeviceFactory}'s
+   * and tries to create new devices for all incoming MQTT messages.
+   *
+   * @param event the event
+   */
   @EventListener
-  public void loadDevices(DefaultMqttClientConnectedEvent event) {
+  public void loadDevices(MqttClientConnectedEvent event) {
     deviceFactories.forEach((rootTopic, factory) -> {
       log.debug("subscribing for topic '{}' with factory '{}'", rootTopic, factory.getClass().getSimpleName());
       event.getClient().subscribe(rootTopic + "#", (topic, byteBuffer) -> createDevice(topic, factory, byteBuffer));
@@ -56,6 +87,7 @@ public class OnFirstEventMqttDeviceLoader {
         //TODO: possible duplicate device
         Optional<MqttSubscriber> deviceOptional = factory.createMqttSubscriber(deviceId);
         deviceOptional.ifPresent(device -> {
+          eventPublisher.publishEvent(eventFactory.createNewDeviceCreatedEvent(device));
           if (topic.startsWith(device.getTopic())) {
             device.processMessage(topic, byteBufferOptional);
           }

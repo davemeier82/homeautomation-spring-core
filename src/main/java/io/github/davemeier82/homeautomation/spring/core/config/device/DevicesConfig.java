@@ -21,10 +21,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Configuration to load and save a Device instances.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record DevicesConfig(String version, List<DeviceConfig> devices) {
 
   public static final String CURRENT_VERSION = "1.0";
 
+  /**
+   * Constructor.
+   *
+   * @param version version of the saved file
+   * @param devices the devices to load / save
+   */
   @JsonCreator
   public DevicesConfig(@JsonProperty("version") String version, @JsonProperty("devices") List<DeviceConfig> devices) {
     this.version = version;

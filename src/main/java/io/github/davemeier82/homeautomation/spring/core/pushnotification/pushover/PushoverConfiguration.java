@@ -21,6 +21,13 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.List;
 
+/**
+ * Configuration for a https://pushover.net/ push notification service.
+ *
+ * @param credentials the credentials
+ * @author David Meier
+ * @since 0.1.0
+ */
 @ConfigurationProperties(prefix = "pushover")
 @ConstructorBinding
 public record PushoverConfiguration(List<PushoverCredential> credentials) {

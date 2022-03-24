@@ -21,6 +21,13 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.List;
 
+/**
+ * Configuration for a https://www.pushbullet.com/ push notification service.
+ *
+ * @param credentials list of credentials
+ * @author David Meier
+ * @since 0.1.0
+ */
 @ConfigurationProperties(prefix = "pushbullet")
 @ConstructorBinding
 public record PushbulletConfiguration(List<PushbulletCredential> credentials) {

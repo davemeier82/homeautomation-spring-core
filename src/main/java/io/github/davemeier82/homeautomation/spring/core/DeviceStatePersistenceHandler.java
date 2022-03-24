@@ -24,9 +24,20 @@ import org.springframework.context.event.EventListener;
 
 import static io.github.davemeier82.homeautomation.core.device.DeviceId.deviceIdFromDevice;
 
+/**
+ * This class listens to events and stores the values in the {@link DeviceStateRepository}.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class DeviceStatePersistenceHandler {
   private final DeviceStateRepository deviceStateRepository;
 
+  /**
+   * Constructor.
+   *
+   * @param deviceStateRepository the repository
+   */
   public DeviceStatePersistenceHandler(DeviceStateRepository deviceStateRepository) {
     this.deviceStateRepository = deviceStateRepository;
   }

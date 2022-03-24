@@ -21,6 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Configuration to load and save push notification settings.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record PushNotificationConfig(String serviceId, List<PushNotificationEventConfig> events) {
 
   @JsonCreator

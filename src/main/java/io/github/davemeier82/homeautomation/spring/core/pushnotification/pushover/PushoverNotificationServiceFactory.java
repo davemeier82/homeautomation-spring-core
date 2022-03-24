@@ -19,11 +19,24 @@ package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushov
 import io.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * Factory to create a Pushover (https://pushover.net/) notification service.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class PushoverNotificationServiceFactory {
 
   private final PushNotificationServiceRegistry pushNotificationServiceRegistry;
   private final WebClient webClient;
 
+  /**
+   * Constructor
+   *
+   * @param pushNotificationServiceRegistry the registry to register this service
+   * @param webClient                       webclient for REST calls
+   * @param pushoverConfiguration           the configuration
+   */
   public PushoverNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
                                             WebClient webClient,
                                             PushoverConfiguration pushoverConfiguration
@@ -33,10 +46,24 @@ public class PushoverNotificationServiceFactory {
     pushoverConfiguration.credentials().forEach(credential -> createAndAddToRegistry(credential.id(), credential.user(), credential.token()));
   }
 
+  /**
+   * Creates a Pushover push notification service
+   *
+   * @param user  username
+   * @param token authentication token
+   * @return the service
+   */
   public PushoverService create(String user, String token) {
     return new PushoverService(webClient, user, token);
   }
 
+  /**
+   * Creates a Pushover push notification service and registers it to the registry
+   *
+   * @param id    unique id of the service
+   * @param user  username
+   * @param token authentication token
+   */
   public void createAndAddToRegistry(String id, String user, String token) {
     pushNotificationServiceRegistry.add(id, create(user, token));
   }

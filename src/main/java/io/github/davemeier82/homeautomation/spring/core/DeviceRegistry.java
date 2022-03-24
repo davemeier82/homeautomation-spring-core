@@ -18,7 +18,7 @@ package io.github.davemeier82.homeautomation.spring.core;
 
 import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.device.DeviceId;
-import io.github.davemeier82.homeautomation.core.event.defaults.DefaultNewDeviceCreatedEvent;
+import io.github.davemeier82.homeautomation.core.event.NewDeviceCreatedEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.Map;
@@ -28,20 +28,40 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static io.github.davemeier82.homeautomation.core.device.DeviceId.deviceIdFromDevice;
 
+/**
+ * Registry that contains all devices that got published with a {@link NewDeviceCreatedEvent}.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class DeviceRegistry {
 
   private final Map<DeviceId, Device> devices = new ConcurrentHashMap<>();
 
+  /**
+   * @return all devices
+   */
   public Set<Device> getDevices() {
     return Set.copyOf(devices.values());
   }
 
+  /**
+   * Returns the device for an id.
+   *
+   * @param deviceId the id
+   * @return the device
+   */
   public Optional<Device> getByDeviceId(DeviceId deviceId) {
     return Optional.ofNullable(devices.get(deviceId));
   }
 
+  /**
+   * Adds a device to the registry.
+   *
+   * @param event the event
+   */
   @EventListener
-  void onDeviceCreated(DefaultNewDeviceCreatedEvent event) {
+  void onDeviceCreated(NewDeviceCreatedEvent event) {
     DeviceId deviceId = deviceIdFromDevice(event.getDevice());
     devices.putIfAbsent(deviceId, event.getDevice());
   }

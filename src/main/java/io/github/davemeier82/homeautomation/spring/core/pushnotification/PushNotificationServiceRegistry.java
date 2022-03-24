@@ -24,19 +24,66 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Registry to register events and devices that should trigger a push notification.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public interface PushNotificationServiceRegistry {
 
+  /**
+   * Adds a push notification service
+   *
+   * @param id                      unique id
+   * @param pushNotificationService the service
+   */
   void add(String id, PushNotificationService pushNotificationService);
 
+  /**
+   * Registers an event that should send messages to a push notification service for the given devices.
+   *
+   * @param event     the event
+   * @param serviceId the id of the push notification service
+   * @param deviceIds the device ids
+   */
   void registerToEvent(Class<? extends DevicePropertyEvent> event, String serviceId, List<DeviceId> deviceIds);
 
+  /**
+   * Register an event that should send messages to a push notification service.
+   *
+   * @param event     the event
+   * @param serviceId the id of the push notification service
+   */
   void registerToEvent(Class<?> event, String serviceId);
 
+  /**
+   * Returns a push notification service for an id.
+   *
+   * @param id the id
+   * @return the service
+   */
   Optional<PushNotificationService> getById(String id);
 
+  /**
+   * Returns all push notification services for an event and device id.
+   *
+   * @param event    the event
+   * @param deviceId the device id
+   * @return all services that match the parameters
+   */
   Set<PushNotificationService> getBy(Class<? extends DevicePropertyEvent> event, DeviceId deviceId);
 
+  /**
+   * Returns all push notification services for an event.
+   *
+   * @param event the event
+   * @return the services
+   */
   Set<PushNotificationService> getBy(Class<?> event);
 
+  /**
+   * @return all push notification services.
+   */
   Set<PushNotificationService> getAll();
 }

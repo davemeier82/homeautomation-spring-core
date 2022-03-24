@@ -28,22 +28,45 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import static java.util.concurrent.ConcurrentHashMap.newKeySet;
 import static java.util.stream.Collectors.toSet;
 
+/**
+ * Default implementation of a {@link PushNotificationServiceRegistry}.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class DefaultPushNotificationServiceRegistry implements PushNotificationServiceRegistry {
 
   private final Map<String, PushNotificationService> idToService = new ConcurrentHashMap<>();
   private final Map<Class<? extends DevicePropertyEvent>, KeySetView<ServiceIdDeviceIdsPair, Boolean>> eventDeviceIdPairToServiceId = new ConcurrentHashMap<>();
   private final Map<Class<?>, Set<String>> applicationEventToServiceId = new ConcurrentHashMap<>();
 
+  /**
+   * @return all push notification services
+   */
   @Override
   public Set<PushNotificationService> getAll() {
     return new HashSet<>(idToService.values());
   }
 
+  /**
+   * Returns a push notification service for an id
+   *
+   * @param id the id
+   * @return the service
+   */
   @Override
   public Optional<PushNotificationService> getById(String id) {
     return Optional.ofNullable(idToService.get(id));
   }
 
+  /**
+   * Returns the push notification services for an event and a device id.
+   * If the event is configured with no device id, all device ids are accepted for this event.
+   *
+   * @param event    the event
+   * @param deviceId the device id
+   * @return push notification services that match the parameters
+   */
   @Override
   public Set<PushNotificationService> getBy(Class<? extends DevicePropertyEvent> event, DeviceId deviceId) {
     return eventDeviceIdPairToServiceId.entrySet().stream()
@@ -56,6 +79,12 @@ public class DefaultPushNotificationServiceRegistry implements PushNotificationS
         .collect(toSet());
   }
 
+  /**
+   * Returns the push notification services for an event.
+   *
+   * @param event the event
+   * @return push notification services configured for the event
+   */
   @Override
   public Set<PushNotificationService> getBy(Class<?> event) {
     return applicationEventToServiceId.entrySet().stream()

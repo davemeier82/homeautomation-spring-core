@@ -55,6 +55,12 @@ import java.util.Set;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
+/**
+ * Auto configuration.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 @Configuration
 @AutoConfigureOrder(LOWEST_PRECEDENCE)
 @EnableConfigurationProperties({PushoverConfiguration.class, PushbulletConfiguration.class})

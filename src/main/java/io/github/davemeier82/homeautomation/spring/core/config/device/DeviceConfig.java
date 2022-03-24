@@ -24,8 +24,23 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNullElseGet;
 
+/**
+ * Configuration to load and save a Device instance.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record DeviceConfig(String type, String displayName, String id, Map<String, String> parameters, Map<String, String> customIdentifiers) {
 
+  /**
+   * Constructor.
+   *
+   * @param type              the device type
+   * @param displayName       the display name
+   * @param id                the device id
+   * @param parameters        parameters that are mandatory to create the device
+   * @param customIdentifiers optional custom identifiers
+   */
   @JsonCreator
   public DeviceConfig(@JsonProperty(value = "type", required = true) String type,
                       @JsonProperty("displayName") String displayName,

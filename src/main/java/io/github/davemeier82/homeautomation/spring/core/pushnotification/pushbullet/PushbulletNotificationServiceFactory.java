@@ -19,11 +19,24 @@ package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushbu
 import io.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * Factory to create a Pushbullet (https://www.pushbullet.com/) notification service.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class PushbulletNotificationServiceFactory {
 
   private final PushNotificationServiceRegistry pushNotificationServiceRegistry;
   private final WebClient webClient;
 
+  /**
+   * Constructor.
+   *
+   * @param pushNotificationServiceRegistry the registry to register this service
+   * @param webClient                       webclient for REST calls
+   * @param pushbulletConfiguration         the configuration
+   */
   public PushbulletNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
                                               WebClient webClient,
                                               PushbulletConfiguration pushbulletConfiguration
@@ -33,10 +46,22 @@ public class PushbulletNotificationServiceFactory {
     pushbulletConfiguration.credentials().forEach(credential -> createAndAddToRegistry(credential.id(), credential.token()));
   }
 
+  /**
+   * Creates a Pushbullet push notification service for a token
+   *
+   * @param token the authentication token
+   * @return the service
+   */
   public PushbulletService create(String token) {
     return new PushbulletService(webClient, token);
   }
 
+  /**
+   * Creates a Pushbullet push notification service and registers it to the registry
+   *
+   * @param id    unique id of the service
+   * @param token the authentication token
+   */
   public void createAndAddToRegistry(String id, String token) {
     pushNotificationServiceRegistry.add(id, create(token));
   }

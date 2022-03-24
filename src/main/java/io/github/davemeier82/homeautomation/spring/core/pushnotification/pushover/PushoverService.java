@@ -24,6 +24,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Implementation of {@link PushNotificationService} for Pushover (https://pushover.net/).
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class PushoverService implements PushNotificationService {
   private static final Logger log = LoggerFactory.getLogger(PushoverService.class);
   private static final URI PUSHOVER_URI = URI.create("https://api.pushover.net/1/messages.json");
@@ -31,6 +37,13 @@ public class PushoverService implements PushNotificationService {
   private final String user;
   private final String token;
 
+  /**
+   * Constructor.
+   *
+   * @param webClient the web client for REST calls
+   * @param user      username
+   * @param token     authentication token
+   */
   public PushoverService(WebClient webClient, String user, String token) {
     this.webClient = webClient;
     this.user = user;

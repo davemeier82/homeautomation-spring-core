@@ -16,5 +16,13 @@
 
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
+/**
+ * Pushbullet (https://www.pushbullet.com/) credentials.
+ *
+ * @param id    a unique id to identify this service in the config
+ * @param token authentication token
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record PushbulletCredential(String id, String token) {
 }

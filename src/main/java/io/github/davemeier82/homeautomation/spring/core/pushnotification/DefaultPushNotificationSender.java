@@ -24,12 +24,27 @@ import org.springframework.context.event.EventListener;
 
 import java.util.Locale;
 
+/**
+ * Default implementation of a PushNotificationSender.
+ * <p>
+ * It checks for each event if there is a push notification configured in the registry. If there is, it translates and sends the message.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class DefaultPushNotificationSender {
 
   private final PushNotificationServiceRegistry registry;
   private final MessageSource messageSource;
   private final Locale locale;
 
+  /**
+   * Constructor.
+   *
+   * @param pushNotificationServiceRegistry the push notification service registry
+   * @param pushNotificationMessageSource   the message source to translate the push notification messages
+   * @param defaultLocale                   the default locale for the translation
+   */
   public DefaultPushNotificationSender(PushNotificationServiceRegistry pushNotificationServiceRegistry,
                                        MessageSource pushNotificationMessageSource,
                                        String defaultLocale
@@ -39,6 +54,12 @@ public class DefaultPushNotificationSender {
     locale = Locale.forLanguageTag(defaultLocale);
   }
 
+  /**
+   * Sends translated messages for the event if it is configured in the registry.
+   * It does not trigger push notifications on value initialization events (if the previous value was null).
+   *
+   * @param event the event
+   */
   @EventListener
   public void handleEvent(DevicePropertyEvent event) {
     if (event.hasPreviousValue()) {
@@ -47,6 +68,11 @@ public class DefaultPushNotificationSender {
     }
   }
 
+  /**
+   * Sends translated messages for the event if it is configured in the registry.
+   *
+   * @param event the event
+   */
   @EventListener
   public void handleEvent(ApplicationEvent event) {
     registry.getBy(event.getClass()).forEach(service -> service.sendTextMessage(event.getClass().getSimpleName(), event.toString()));

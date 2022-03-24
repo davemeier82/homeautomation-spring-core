@@ -16,5 +16,14 @@
 
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
 
+/**
+ * Pushover (https://pushover.net/) credentials.
+ *
+ * @param id    a unique id to identify this service in the config
+ * @param user  the username
+ * @param token the authentication token
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record PushoverCredential(String id, String user, String token) {
 }

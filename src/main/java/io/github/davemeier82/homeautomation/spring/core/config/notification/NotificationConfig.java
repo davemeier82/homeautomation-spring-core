@@ -21,8 +21,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Configuration to load and save notification settings.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record NotificationConfig(String version, List<PushNotificationConfig> pushNotificationConfigs) {
 
+  /**
+   * @param version                 version of the configuration file
+   * @param pushNotificationConfigs config for push notifications
+   */
   @JsonCreator
   public NotificationConfig(@JsonProperty("version") String version, @JsonProperty("push") List<PushNotificationConfig> pushNotificationConfigs) {
     this.version = version;

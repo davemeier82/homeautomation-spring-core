@@ -32,6 +32,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Loads {@link PushNotificationConfig} form a JSON file.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class NotificationConfigLoader {
   private static final Logger log = LoggerFactory.getLogger(NotificationConfigLoader.class);
 
@@ -40,6 +46,14 @@ public class NotificationConfigLoader {
   private final EventFactory eventFactory;
   private final ObjectMapper objectMapper;
 
+  /**
+   * Constructor.
+   *
+   * @param configFilePath                  the path (incl. filename) to the configuration file
+   * @param pushNotificationServiceRegistry registry for push notification services
+   * @param eventFactory                    the event factory
+   * @param objectMapper                    the object mapper to map the JSON file
+   */
   public NotificationConfigLoader(Path configFilePath,
                                   PushNotificationServiceRegistry pushNotificationServiceRegistry,
                                   EventFactory eventFactory,
@@ -51,11 +65,19 @@ public class NotificationConfigLoader {
     this.pushNotificationServiceRegistry = pushNotificationServiceRegistry;
   }
 
+  /**
+   * Load the configuration when the application is ready.
+   *
+   * @param event the event
+   */
   @EventListener
   public void onApplicationEvent(ApplicationReadyEvent event) {
     load();
   }
 
+  /**
+   * Loads the file and configures the push notification events.
+   */
   public void load() {
     loadPushNotificationConfigs().forEach(this::load);
   }

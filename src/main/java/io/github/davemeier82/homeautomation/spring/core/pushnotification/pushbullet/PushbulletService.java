@@ -25,6 +25,12 @@ import reactor.core.publisher.Mono;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * Implementation of {@link PushNotificationService} for Pushbullet (https://www.pushbullet.com/).
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class PushbulletService implements PushNotificationService {
 
   private static final Logger log = LoggerFactory.getLogger(PushbulletService.class);
@@ -32,6 +38,12 @@ public class PushbulletService implements PushNotificationService {
   private final WebClient webClient;
   private final String token;
 
+  /**
+   * Constructor.
+   *
+   * @param webClient the web client for REST calls
+   * @param token     the authentication token
+   */
   public PushbulletService(WebClient webClient, String token) {
     this.webClient = webClient;
     this.token = token;

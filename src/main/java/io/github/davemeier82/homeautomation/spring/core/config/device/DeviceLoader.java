@@ -20,17 +20,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.device.DeviceFactory;
 import io.github.davemeier82.homeautomation.core.event.EventPublisher;
+import io.github.davemeier82.homeautomation.core.event.NewDeviceCreatedEvent;
 import io.github.davemeier82.homeautomation.core.event.factory.EventFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.io.Resource;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,9 +36,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Loads {@link DevicesConfig} form a JSON file and creates devices.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class DeviceLoader {
   private static final Logger log = LoggerFactory.getLogger(DeviceLoader.class);
 
@@ -51,6 +53,15 @@ public class DeviceLoader {
   private final ObjectMapper objectMapper;
   private final EventPublisher eventPublisher;
 
+  /**
+   * Constructor.
+   *
+   * @param configFilePath  the file path (incl. filename) of the config file
+   * @param deviceFactories factory to create the devices
+   * @param objectMapper    the mapper to map the JSON file
+   * @param eventFactory    the event factory
+   * @param eventPublisher  the event publisher where the created devices are getting published
+   */
   public DeviceLoader(Path configFilePath,
                       Set<DeviceFactory> deviceFactories,
                       ObjectMapper objectMapper,
@@ -67,13 +78,26 @@ public class DeviceLoader {
     this.eventPublisher = eventPublisher;
   }
 
+  /**
+   * Loads the device config, creates the devices and publishes {@link NewDeviceCreatedEvent} for each created device
+   * as well as {@link io.github.davemeier82.homeautomation.core.event.DevicesLoadedEvent} when the loading has been completed.
+   *
+   * @param event this event triggers the loading
+   */
   @EventListener
   public void onApplicationEvent(ApplicationReadyEvent event) {
-    load();
+    List<Device> load = load();
+    load.forEach(device -> eventPublisher.publishEvent(eventFactory.createNewDeviceCreatedEvent(device)));
+    eventPublisher.publishEvent(eventFactory.createDevicesLoadedEvent(load));
   }
 
+  /**
+   * Loads the device config for a file and creates devices.
+   *
+   * @return the loaded devices
+   */
   public List<Device> load() {
-    List<Device> devices = loadDeviceConfigs().stream().map(deviceConfig -> {
+    return loadDeviceConfigs().stream().map(deviceConfig -> {
       DeviceFactory deviceFactory = deviceTypeToFactory.get(deviceConfig.type());
       if (deviceFactory == null) {
         throw new RuntimeException("failed to load device of type " + deviceConfig.type());
@@ -84,8 +108,6 @@ public class DeviceLoader {
           deviceConfig.parameters(),
           deviceConfig.customIdentifiers());
     }).toList();
-    eventPublisher.publishEvent(eventFactory.createDevicesLoadedEvent(devices));
-    return devices;
   }
 
   private List<DeviceConfig> loadDeviceConfigs() {
@@ -101,11 +123,4 @@ public class DeviceLoader {
     return List.of();
   }
 
-  public static String asString(Resource resource) {
-    try (Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)) {
-      return FileCopyUtils.copyToString(reader);
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
 }

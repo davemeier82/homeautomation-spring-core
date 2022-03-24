@@ -16,6 +16,12 @@
 
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
+/**
+ * Pushbullet (https://www.pushbullet.com/) API payload.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class PushbulletNote {
   private final String type = "note";
   private final String title;

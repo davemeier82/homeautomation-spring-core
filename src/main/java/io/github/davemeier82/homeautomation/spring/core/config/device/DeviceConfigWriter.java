@@ -35,6 +35,12 @@ import static java.nio.file.Files.notExists;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
+/**
+ * Saves {@link DevicesConfig} into a JSON file when new devices are created.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class DeviceConfigWriter {
 
   private final DeviceRegistry deviceRegistry;
@@ -43,12 +49,24 @@ public class DeviceConfigWriter {
   private final Path configFilePath;
   private boolean enabled = false;
 
+  /**
+   * Constructor.
+   *
+   * @param deviceRegistry the device registry
+   * @param objectMapper   the object mapper used to map the config to a json
+   * @param configFilePath the file path (incl. filename) where the config should get saved
+   */
   public DeviceConfigWriter(DeviceRegistry deviceRegistry, ObjectMapper objectMapper, Path configFilePath) {
     this.deviceRegistry = deviceRegistry;
     this.objectMapper = objectMapper;
     this.configFilePath = configFilePath;
   }
 
+  /**
+   * Saved the device config when a new device is created and the initial loading of the devices has completed {@link DefaultDevicesLoadedEvent}
+   *
+   * @param event event that signals that a new device has been created
+   */
   @EventListener
   void onDeviceCreated(DefaultNewDeviceCreatedEvent event) {
     if (enabled) {
@@ -56,6 +74,11 @@ public class DeviceConfigWriter {
     }
   }
 
+  /**
+   * Enables the device config saving (but does not trigger a save)
+   *
+   * @param event event that signals that the initial loading of the devices has been completed
+   */
   @EventListener
   void onDevicesLoaded(DefaultDevicesLoadedEvent event) {
     enabled = true;

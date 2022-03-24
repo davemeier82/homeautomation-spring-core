@@ -20,5 +20,13 @@ import io.github.davemeier82.homeautomation.core.device.DeviceId;
 
 import java.util.List;
 
+/**
+ * Configuration to load and save push notification settings.
+ *
+ * @param type      the event (i.e. TemperatureChangedEvent) that should trigger a push notification
+ * @param deviceIds the ids of the devices that should trigger a push notification for the configured event
+ * @author David Meier
+ * @since 0.1.0
+ */
 public record PushNotificationEventConfig(String type, List<DeviceId> deviceIds) {
 }

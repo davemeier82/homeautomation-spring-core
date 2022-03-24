@@ -16,19 +16,33 @@
 
 package io.github.davemeier82.homeautomation.spring.core;
 
-import io.github.davemeier82.homeautomation.core.event.defaults.DefaultDevicesLoadedEvent;
+import io.github.davemeier82.homeautomation.core.event.DevicesLoadedEvent;
 import io.github.davemeier82.homeautomation.core.mqtt.MqttClient;
 import org.springframework.context.event.EventListener;
 
+/**
+ * Connects the MQTT Client to the Broker after all devices have been loaded.
+ *
+ * @author David Meier
+ * @since 0.1.0
+ */
 public class MqttClientConnector {
 
   private final MqttClient mqttClient;
 
+  /**
+   * Constructor.
+   *
+   * @param mqttClient the MQTT client
+   */
   public MqttClientConnector(MqttClient mqttClient) {
     this.mqttClient = mqttClient;
   }
 
-  @EventListener(DefaultDevicesLoadedEvent.class)
+  /**
+   * Connects the MQTT Client to the Broker after all devices have been loaded
+   */
+  @EventListener(DevicesLoadedEvent.class)
   public void connectClient() {
     mqttClient.connect();
   }
