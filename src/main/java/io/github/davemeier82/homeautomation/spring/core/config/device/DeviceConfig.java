@@ -42,17 +42,17 @@ public record DeviceConfig(String type, String displayName, String id, Map<Strin
    * @param customIdentifiers optional custom identifiers
    */
   @JsonCreator
-  public DeviceConfig(@JsonProperty(value = "type", required = true) String type,
-                      @JsonProperty("displayName") String displayName,
-                      @JsonProperty(value = "id", required = true) String id,
-                      @JsonProperty("parameters") Map<String, String> parameters,
-                      @JsonProperty("customIdentifiers") Map<String, String> customIdentifiers
+  public DeviceConfig(@JsonProperty(required = true) String type,
+                      String displayName,
+                      @JsonProperty(required = true) String id,
+                      Map<String, String> parameters,
+                      Map<String, String> customIdentifiers
   ) {
     this.type = type;
     this.displayName = displayName;
     this.id = id;
     this.parameters = requireNonNullElseGet(parameters, Map::of);
-    this.customIdentifiers = customIdentifiers;
+    this.customIdentifiers = requireNonNullElseGet(customIdentifiers, Map::of);
   }
 
 }

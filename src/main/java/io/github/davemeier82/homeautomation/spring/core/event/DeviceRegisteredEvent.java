@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2021 the original author or authors.
+ * Copyright 2021-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 
-package io.github.davemeier82.homeautomation.spring.core.config.device;
+package io.github.davemeier82.homeautomation.spring.core.event;
 
-import java.util.List;
+import io.github.davemeier82.homeautomation.core.device.Device;
 
 /**
- * Configuration to load and save a Device instances.
+ * Default implementation of a {@link DeviceRegisteredEvent}.
  *
  * @author David Meier
- * @since 0.1.0
+ * @since 0.1.2
  */
-public record DevicesConfig(String version, List<DeviceConfig> devices) {
+public class DeviceRegisteredEvent {
 
-  public static final String CURRENT_VERSION = "1.0";
+  private final Device device;
 
+  /**
+   * Constructor
+   *
+   * @param device the device
+   */
+  public DeviceRegisteredEvent(Device device) {
+    this.device = device;
+  }
+
+  public Device getDevice() {
+    return device;
+  }
 }

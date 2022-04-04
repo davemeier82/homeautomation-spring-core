@@ -121,8 +121,8 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  DeviceRegistry deviceRegistry() {
-    return new DeviceRegistry();
+  DeviceRegistry deviceRegistry(EventPublisher eventPublisher) {
+    return new DeviceRegistry(eventPublisher);
   }
 
   @Bean
@@ -161,7 +161,7 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  @ConditionalOnProperty(prefix = "config.writer", name = "enabled", havingValue = "true")
+  @ConditionalOnProperty(prefix = "device.config.writer", name = "enabled", havingValue = "true")
   DeviceConfigWriter deviceConfigWriter(DeviceRegistry deviceRegistry,
                                         ObjectMapper objectMapper,
                                         @Value("${device.config.location}") String configPath

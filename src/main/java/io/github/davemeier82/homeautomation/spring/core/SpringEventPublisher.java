@@ -17,6 +17,8 @@
 package io.github.davemeier82.homeautomation.spring.core;
 
 import io.github.davemeier82.homeautomation.core.event.EventPublisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -27,6 +29,7 @@ import org.springframework.context.ApplicationEventPublisher;
  */
 public class SpringEventPublisher implements EventPublisher {
 
+  private static final Logger log = LoggerFactory.getLogger(SpringEventPublisher.class);
   private final ApplicationEventPublisher applicationEventPublisher;
 
   /**
@@ -40,6 +43,7 @@ public class SpringEventPublisher implements EventPublisher {
 
   @Override
   public void publishEvent(Object event) {
+    log.debug("publishing event: {}", event.getClass().getSimpleName());
     applicationEventPublisher.publishEvent(event);
   }
 }

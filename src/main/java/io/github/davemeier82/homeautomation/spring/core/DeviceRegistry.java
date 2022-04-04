@@ -18,7 +18,9 @@ package io.github.davemeier82.homeautomation.spring.core;
 
 import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.device.DeviceId;
+import io.github.davemeier82.homeautomation.core.event.EventPublisher;
 import io.github.davemeier82.homeautomation.core.event.NewDeviceCreatedEvent;
+import io.github.davemeier82.homeautomation.spring.core.event.DeviceRegisteredEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.Map;
@@ -37,6 +39,11 @@ import static io.github.davemeier82.homeautomation.core.device.DeviceId.deviceId
 public class DeviceRegistry {
 
   private final Map<DeviceId, Device> devices = new ConcurrentHashMap<>();
+  private final EventPublisher eventPublisher;
+
+  public DeviceRegistry(EventPublisher eventPublisher) {
+    this.eventPublisher = eventPublisher;
+  }
 
   /**
    * @return all devices
@@ -63,6 +70,8 @@ public class DeviceRegistry {
   @EventListener
   void onDeviceCreated(NewDeviceCreatedEvent event) {
     DeviceId deviceId = deviceIdFromDevice(event.getDevice());
-    devices.putIfAbsent(deviceId, event.getDevice());
+    if (devices.putIfAbsent(deviceId, event.getDevice()) == null) {
+      eventPublisher.publishEvent(new DeviceRegisteredEvent(event.getDevice()));
+    }
   }
 }

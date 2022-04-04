@@ -18,9 +18,9 @@ package io.github.davemeier82.homeautomation.spring.core.config.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.davemeier82.homeautomation.core.device.Device;
-import io.github.davemeier82.homeautomation.core.event.defaults.DefaultDevicesLoadedEvent;
-import io.github.davemeier82.homeautomation.core.event.defaults.DefaultNewDeviceCreatedEvent;
+import io.github.davemeier82.homeautomation.core.event.DevicesLoadedEvent;
 import io.github.davemeier82.homeautomation.spring.core.DeviceRegistry;
+import io.github.davemeier82.homeautomation.spring.core.event.DeviceRegisteredEvent;
 import org.springframework.context.event.EventListener;
 
 import java.io.IOException;
@@ -63,12 +63,12 @@ public class DeviceConfigWriter {
   }
 
   /**
-   * Saved the device config when a new device is created and the initial loading of the devices has completed {@link DefaultDevicesLoadedEvent}
+   * Saved the device config when a new device is created and the initial loading of the devices has completed {@link DevicesLoadedEvent}
    *
-   * @param event event that signals that a new device has been created
+   * @param event event that signals that a new device has been registered
    */
   @EventListener
-  void onDeviceCreated(DefaultNewDeviceCreatedEvent event) {
+  void onDeviceCreated(DeviceRegisteredEvent event) {
     if (enabled) {
       save();
     }
@@ -80,7 +80,7 @@ public class DeviceConfigWriter {
    * @param event event that signals that the initial loading of the devices has been completed
    */
   @EventListener
-  void onDevicesLoaded(DefaultDevicesLoadedEvent event) {
+  void onDevicesLoaded(DevicesLoadedEvent event) {
     enabled = true;
   }
 
