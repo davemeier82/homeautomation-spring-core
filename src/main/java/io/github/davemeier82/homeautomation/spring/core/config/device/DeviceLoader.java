@@ -97,17 +97,24 @@ public class DeviceLoader {
    * @return the loaded devices
    */
   public List<Device> load() {
-    return loadDeviceConfigs().stream().map(deviceConfig -> {
-      DeviceFactory deviceFactory = deviceTypeToFactory.get(deviceConfig.type());
-      if (deviceFactory == null) {
-        throw new RuntimeException("failed to load device of type " + deviceConfig.type());
-      }
-      return deviceFactory.createDevice(deviceConfig.type(),
-          deviceConfig.id(),
-          deviceConfig.displayName(),
-          deviceConfig.parameters(),
-          deviceConfig.customIdentifiers());
-    }).toList();
+    return loadDeviceConfigs().stream().map(this::load).toList();
+  }
+
+  /**
+   * Creates a device for a device config
+   *
+   * @return the newly created device
+   */
+  public Device load(DeviceConfig deviceConfig) {
+    DeviceFactory deviceFactory = deviceTypeToFactory.get(deviceConfig.type());
+    if (deviceFactory == null) {
+      throw new RuntimeException("failed to load device of type " + deviceConfig.type());
+    }
+    return deviceFactory.createDevice(deviceConfig.type(),
+        deviceConfig.id(),
+        deviceConfig.displayName(),
+        deviceConfig.parameters(),
+        deviceConfig.customIdentifiers());
   }
 
   private List<DeviceConfig> loadDeviceConfigs() {

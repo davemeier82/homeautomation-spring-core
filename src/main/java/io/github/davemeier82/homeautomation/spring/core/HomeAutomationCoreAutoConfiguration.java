@@ -23,6 +23,7 @@ import io.github.davemeier82.homeautomation.core.event.EventPublisher;
 import io.github.davemeier82.homeautomation.core.event.factory.DefaultEventFactory;
 import io.github.davemeier82.homeautomation.core.event.factory.EventFactory;
 import io.github.davemeier82.homeautomation.core.mqtt.MqttClient;
+import io.github.davemeier82.homeautomation.spring.core.config.device.DeviceConfigFactory;
 import io.github.davemeier82.homeautomation.spring.core.config.device.DeviceConfigWriter;
 import io.github.davemeier82.homeautomation.spring.core.config.device.DeviceLoader;
 import io.github.davemeier82.homeautomation.spring.core.config.notification.NotificationConfigLoader;
@@ -162,11 +163,18 @@ public class HomeAutomationCoreAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnProperty(prefix = "device.config.writer", name = "enabled", havingValue = "true")
-  DeviceConfigWriter deviceConfigWriter(DeviceRegistry deviceRegistry,
+  DeviceConfigFactory deviceConfigFactory(DeviceRegistry deviceRegistry) {
+    return new DeviceConfigFactory(deviceRegistry);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnProperty(prefix = "device.config.writer", name = "enabled", havingValue = "true")
+  DeviceConfigWriter deviceConfigWriter(DeviceConfigFactory deviceConfigFactory,
                                         ObjectMapper objectMapper,
                                         @Value("${device.config.location}") String configPath
   ) {
-    return new DeviceConfigWriter(deviceRegistry, objectMapper, Path.of(configPath));
+    return new DeviceConfigWriter(deviceConfigFactory, objectMapper, Path.of(configPath));
   }
 
   @Bean

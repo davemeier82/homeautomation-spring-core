@@ -17,9 +17,7 @@
 package io.github.davemeier82.homeautomation.spring.core.config.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.event.DevicesLoadedEvent;
-import io.github.davemeier82.homeautomation.spring.core.DeviceRegistry;
 import io.github.davemeier82.homeautomation.spring.core.event.DeviceRegisteredEvent;
 import org.springframework.context.event.EventListener;
 
@@ -27,7 +25,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static java.nio.file.Files.createFile;
@@ -43,7 +40,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  */
 public class DeviceConfigWriter {
 
-  private final DeviceRegistry deviceRegistry;
+  private final DeviceConfigFactory deviceConfigFactory;
   private final ReentrantLock saveLock = new ReentrantLock();
   private final ObjectMapper objectMapper;
   private final Path configFilePath;
@@ -52,12 +49,12 @@ public class DeviceConfigWriter {
   /**
    * Constructor.
    *
-   * @param deviceRegistry the device registry
-   * @param objectMapper   the object mapper used to map the config to a json
-   * @param configFilePath the file path (incl. filename) where the config should get saved
+   * @param deviceConfigFactory the device config factory
+   * @param objectMapper        the object mapper used to map the config to a json
+   * @param configFilePath      the file path (incl. filename) where the config should get saved
    */
-  public DeviceConfigWriter(DeviceRegistry deviceRegistry, ObjectMapper objectMapper, Path configFilePath) {
-    this.deviceRegistry = deviceRegistry;
+  public DeviceConfigWriter(DeviceConfigFactory deviceConfigFactory, ObjectMapper objectMapper, Path configFilePath) {
+    this.deviceConfigFactory = deviceConfigFactory;
     this.objectMapper = objectMapper;
     this.configFilePath = configFilePath;
   }
@@ -84,7 +81,10 @@ public class DeviceConfigWriter {
     enabled = true;
   }
 
-  private void save() {
+  /**
+   * Saves the devices in the {@link io.github.davemeier82.homeautomation.spring.core.DeviceRegistry} as device config.
+   */
+  public void save() {
     if (saveLock.hasQueuedThreads()) {
       return;
     } else {
@@ -94,14 +94,8 @@ public class DeviceConfigWriter {
       if (notExists(configFilePath)) {
         createFile(configFilePath);
       }
-      List<DeviceConfig> deviceConfigs = deviceRegistry.getDevices().stream()
-          .map(this::toConfig)
-          .toList();
-      Files.writeString(configFilePath,
-          objectMapper.writerWithDefaultPrettyPrinter()
-              .writeValueAsString(new DevicesConfig(DevicesConfig.CURRENT_VERSION, deviceConfigs)),
-          TRUNCATE_EXISTING,
-          WRITE);
+      DevicesConfig devicesConfig = deviceConfigFactory.createDevicesConfig();
+      write(devicesConfig);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     } finally {
@@ -109,8 +103,11 @@ public class DeviceConfigWriter {
     }
   }
 
-  private DeviceConfig toConfig(Device device) {
-    return new DeviceConfig(device.getType(), device.getDisplayName(), device.getId(), device.getParameters(), device.getCustomIdentifiers());
+  private void write(DevicesConfig devicesConfig) throws IOException {
+    Files.writeString(configFilePath,
+        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(devicesConfig),
+        TRUNCATE_EXISTING,
+        WRITE);
   }
 
 }
