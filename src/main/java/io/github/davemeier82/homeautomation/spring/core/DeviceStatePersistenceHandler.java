@@ -78,6 +78,11 @@ public class DeviceStatePersistenceHandler {
   }
 
   @EventListener
+  public void handleEvent(DefaultMotionDetectedPropertyEvent event) {
+    writeBooleanValue("motion", event.getDeviceProperty().getDevice(), event.motionDetected());
+  }
+
+  @EventListener
   public void handleEvent(DefaultWindowStateChangedPropertyEvent event) {
     writeBooleanValue("window", event.getDevice(), event.isOpen());
   }
