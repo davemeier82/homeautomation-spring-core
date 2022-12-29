@@ -17,18 +17,16 @@
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.List;
 
 /**
- * Configuration for a https://www.pushbullet.com/ push notification service.
+ * Configuration for a <a href="https://www.pushbullet.com/">...</a> push notification service.
  *
  * @param credentials list of credentials
  * @author David Meier
  * @since 0.1.0
  */
 @ConfigurationProperties(prefix = "pushbullet")
-@ConstructorBinding
 public record PushbulletConfiguration(List<PushbulletCredential> credentials) {
 }

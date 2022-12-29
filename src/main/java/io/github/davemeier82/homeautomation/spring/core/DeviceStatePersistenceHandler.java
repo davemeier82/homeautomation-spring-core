@@ -43,47 +43,47 @@ public class DeviceStatePersistenceHandler {
   }
 
   @EventListener
-  public void handleEvent(DefaultBatteryLevelChangedPropertyEvent event) {
+  public void handleEvent(DefaultBatteryLevelUpdatedPropertyEvent event) {
     writeIntValue("battery", event.getDeviceProperty().getDevice(), event.getBatteryLevelInPercent());
   }
 
   @EventListener
-  public void handleEvent(DefaultDimmingLevelChangedPropertyEvent event) {
+  public void handleEvent(DefaultDimmingLevelUpdatedPropertyEvent event) {
     writeIntValue("dimmer", event.getDeviceProperty().getDevice(), event.getDimmingLevelInPercent());
   }
 
   @EventListener
-  public void handleEvent(DefaultHumidityChangedPropertyEvent event) {
+  public void handleEvent(DefaultHumidityUpdatedPropertyEvent event) {
     writeFloatValue("humidity", event.getDeviceProperty().getDevice(), event.getRelativeHumidityInPercent());
   }
 
   @EventListener
-  public void handleEvent(DefaultTemperatureChangedPropertyEvent event) {
+  public void handleEvent(DefaultTemperatureUpdatedPropertyEvent event) {
     writeFloatValue("temperature", event.getDeviceProperty().getDevice(), event.getTemperatureInDegree());
   }
 
   @EventListener
-  public void handleEvent(DefaultPowerChangedPropertyEvent event) {
+  public void handleEvent(DefaultPowerUpdatedPropertyEvent event) {
     writeDoubleValue("power", event.getDeviceProperty().getDevice(), event.getWatt());
   }
 
   @EventListener
-  public void handleEvent(DefaultIlluminanceChangedPropertyEvent event) {
+  public void handleEvent(DefaultIlluminanceUpdatedPropertyEvent event) {
     writeIntValue("illuminance", event.getDeviceProperty().getDevice(), event.getLux());
   }
 
   @EventListener
-  public void handleEvent(DefaultRelayStateChangedPropertyEvent event) {
+  public void handleEvent(DefaultRelayStateUpdatedPropertyEvent event) {
     writeBooleanValue("relay", event.getDeviceProperty().getDevice(), event.isOn());
   }
 
   @EventListener
-  public void handleEvent(DefaultMotionDetectedPropertyEvent event) {
+  public void handleEvent(DefaultMotionUpdatedPropertyEvent event) {
     writeBooleanValue("motion", event.getDeviceProperty().getDevice(), event.motionDetected());
   }
 
   @EventListener
-  public void handleEvent(DefaultWindowStateChangedPropertyEvent event) {
+  public void handleEvent(DefaultWindowStateUpdatedPropertyEvent event) {
     writeBooleanValue("window", event.getDevice(), event.isOpen());
   }
 

@@ -17,18 +17,16 @@
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.util.List;
 
 /**
- * Configuration for a https://pushover.net/ push notification service.
+ * Configuration for a <a href="https://pushover.net/">...</a> push notification service.
  *
  * @param credentials the credentials
  * @author David Meier
  * @since 0.1.0
  */
 @ConfigurationProperties(prefix = "pushover")
-@ConstructorBinding
 public record PushoverConfiguration(List<PushoverCredential> credentials) {
 }
