@@ -15,8 +15,7 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.davemeier82.homeautomation</groupId>
@@ -25,7 +24,7 @@
     </parent>
 
     <artifactId>homeautomation-spring-core</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.2</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>HomeAutomation Spring implementation of the Core</description>
@@ -49,7 +48,7 @@
         <developerConnection>scm:git:ssh://git@github.com/davemeier82/homeautomation-spring-core.git
         </developerConnection>
         <url>https://github.com/davemeier82/homeautomation-spring-core</url>
-        <tag>HEAD</tag>
+        <tag>homeautomation-spring-core-0.2.2</tag>
     </scm>
     <issueManagement>
         <system>GitHub</system>
