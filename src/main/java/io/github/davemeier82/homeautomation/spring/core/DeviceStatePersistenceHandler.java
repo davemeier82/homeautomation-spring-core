@@ -44,47 +44,57 @@ public class DeviceStatePersistenceHandler {
 
   @EventListener
   public void handleEvent(DefaultBatteryLevelUpdatedPropertyEvent event) {
-    writeIntValue("battery", event.getDeviceProperty().getDevice(), event.getBatteryLevelInPercent());
+    writeIntValue("battery", event.getDevice(), event.getBatteryLevelInPercent());
   }
 
   @EventListener
   public void handleEvent(DefaultDimmingLevelUpdatedPropertyEvent event) {
-    writeIntValue("dimmer", event.getDeviceProperty().getDevice(), event.getDimmingLevelInPercent());
+    writeIntValue("dimmer", event.getDevice(), event.getDimmingLevelInPercent());
   }
 
   @EventListener
   public void handleEvent(DefaultHumidityUpdatedPropertyEvent event) {
-    writeFloatValue("humidity", event.getDeviceProperty().getDevice(), event.getRelativeHumidityInPercent());
+    writeFloatValue("humidity", event.getDevice(), event.getRelativeHumidityInPercent());
   }
 
   @EventListener
   public void handleEvent(DefaultTemperatureUpdatedPropertyEvent event) {
-    writeFloatValue("temperature", event.getDeviceProperty().getDevice(), event.getTemperatureInDegree());
+    writeFloatValue("temperature", event.getDevice(), event.getTemperatureInDegree());
   }
 
   @EventListener
   public void handleEvent(DefaultPowerUpdatedPropertyEvent event) {
-    writeDoubleValue("power", event.getDeviceProperty().getDevice(), event.getWatt());
+    writeDoubleValue("power", event.getDevice(), event.getWatt());
   }
 
   @EventListener
   public void handleEvent(DefaultIlluminanceUpdatedPropertyEvent event) {
-    writeIntValue("illuminance", event.getDeviceProperty().getDevice(), event.getLux());
+    writeIntValue("illuminance", event.getDevice(), event.getLux());
   }
 
   @EventListener
   public void handleEvent(DefaultRelayStateUpdatedPropertyEvent event) {
-    writeBooleanValue("relay", event.getDeviceProperty().getDevice(), event.isOn());
+    writeBooleanValue("relay", event.getDevice(), event.isOn());
   }
 
   @EventListener
   public void handleEvent(DefaultMotionUpdatedPropertyEvent event) {
-    writeBooleanValue("motion", event.getDeviceProperty().getDevice(), event.motionDetected());
+    writeBooleanValue("motion", event.getDevice(), event.motionDetected());
   }
 
   @EventListener
   public void handleEvent(DefaultWindowStateUpdatedPropertyEvent event) {
     writeBooleanValue("window", event.getDevice(), event.isOpen());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultICo2LevelUpdatedPropertyEvent event) {
+    writeIntValue("co2", event.getDevice(), event.getPpm());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultSmokeStateUpdatedPropertyEvent event) {
+    writeBooleanValue("smoke", event.getDevice(), event.isActive());
   }
 
   private void writeIntValue(String category, Device device, DataWithTimestamp<Integer> data) {
