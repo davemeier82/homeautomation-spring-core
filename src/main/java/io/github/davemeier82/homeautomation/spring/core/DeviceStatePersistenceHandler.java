@@ -153,6 +153,9 @@ public class DeviceStatePersistenceHandler {
   }
 
   private void writeIntValue(String category, String label, Device device, DataWithTimestamp<Integer> data) {
+    if (data == null) {
+      return;
+    }
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
         label,
@@ -161,6 +164,9 @@ public class DeviceStatePersistenceHandler {
   }
 
   private void writeFloatValue(String category, String label, Device device, DataWithTimestamp<Float> data) {
+    if (data == null) {
+      return;
+    }
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
         label,
@@ -169,6 +175,9 @@ public class DeviceStatePersistenceHandler {
   }
 
   private void writeDoubleValue(String category, String label, Device device, DataWithTimestamp<Double> data) {
+    if (data == null) {
+      return;
+    }
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
         label,
@@ -177,6 +186,9 @@ public class DeviceStatePersistenceHandler {
   }
 
   private void writeBooleanValue(String category, String label, Device device, DataWithTimestamp<Boolean> data) {
+    if (data == null) {
+      return;
+    }
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
         label,
