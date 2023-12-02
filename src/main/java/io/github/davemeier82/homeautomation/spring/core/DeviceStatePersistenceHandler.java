@@ -44,83 +44,142 @@ public class DeviceStatePersistenceHandler {
 
   @EventListener
   public void handleEvent(DefaultBatteryLevelUpdatedPropertyEvent event) {
-    writeIntValue("battery", event.getDevice(), event.getBatteryLevelInPercent());
+    writeIntValue("battery", event.getDeviceProperty().getLabel(), event.getDevice(), event.getBatteryLevelInPercent());
   }
 
   @EventListener
   public void handleEvent(DefaultDimmingLevelUpdatedPropertyEvent event) {
-    writeIntValue("dimmer", event.getDevice(), event.getDimmingLevelInPercent());
+    writeIntValue("dimmer", event.getDeviceProperty().getLabel(), event.getDevice(), event.getDimmingLevelInPercent());
   }
 
   @EventListener
   public void handleEvent(DefaultHumidityUpdatedPropertyEvent event) {
-    writeFloatValue("humidity", event.getDevice(), event.getRelativeHumidityInPercent());
+    writeFloatValue("humidity", event.getDeviceProperty().getLabel(), event.getDevice(), event.getRelativeHumidityInPercent());
   }
 
   @EventListener
   public void handleEvent(DefaultTemperatureUpdatedPropertyEvent event) {
-    writeFloatValue("temperature", event.getDevice(), event.getTemperatureInDegree());
+    writeFloatValue("temperature", event.getDeviceProperty().getLabel(), event.getDevice(), event.getTemperatureInDegree());
   }
 
   @EventListener
   public void handleEvent(DefaultPowerUpdatedPropertyEvent event) {
-    writeDoubleValue("power", event.getDevice(), event.getWatt());
+    writeDoubleValue("power", event.getDeviceProperty().getLabel(), event.getDevice(), event.getWatt());
   }
 
   @EventListener
   public void handleEvent(DefaultIlluminanceUpdatedPropertyEvent event) {
-    writeIntValue("illuminance", event.getDevice(), event.getLux());
+    writeIntValue("illuminance", event.getDeviceProperty().getLabel(), event.getDevice(), event.getLux());
   }
 
   @EventListener
   public void handleEvent(DefaultRelayStateUpdatedPropertyEvent event) {
-    writeBooleanValue("relay", event.getDevice(), event.isOn());
+    writeBooleanValue("relay", event.getDeviceProperty().getLabel(), event.getDevice(), event.isOn());
   }
 
   @EventListener
   public void handleEvent(DefaultMotionUpdatedPropertyEvent event) {
-    writeBooleanValue("motion", event.getDevice(), event.motionDetected());
+    writeBooleanValue("motion", event.getDeviceProperty().getLabel(), event.getDevice(), event.motionDetected());
   }
 
   @EventListener
   public void handleEvent(DefaultWindowStateUpdatedPropertyEvent event) {
-    writeBooleanValue("window", event.getDevice(), event.isOpen());
+    writeBooleanValue("window", event.getDeviceProperty().getLabel(), event.getDevice(), event.isOpen());
   }
 
   @EventListener
   public void handleEvent(DefaultICo2LevelUpdatedPropertyEvent event) {
-    writeIntValue("co2", event.getDevice(), event.getPpm());
+    writeIntValue("co2", event.getDeviceProperty().getLabel(), event.getDevice(), event.getPpm());
   }
 
   @EventListener
   public void handleEvent(DefaultSmokeStateUpdatedPropertyEvent event) {
-    writeBooleanValue("smoke", event.getDevice(), event.isActive());
+    writeBooleanValue("smoke", event.getDeviceProperty().getLabel(), event.getDevice(), event.isActive());
   }
 
-  private void writeIntValue(String category, Device device, DataWithTimestamp<Integer> data) {
+  @EventListener
+  public void handleEvent(DefaultPressureUpdatedPropertyEvent event) {
+    writeFloatValue("pressure", event.getDeviceProperty().getLabel(), event.getDevice(), event.getPressureInMbar());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultUvIndexUpdatedPropertyEvent event) {
+    writeFloatValue("uvindex", event.getDeviceProperty().getLabel(), event.getDevice(), event.getUvIndex());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultCloudBaseUpdatedPropertyEvent event) {
+    writeFloatValue("cloudbase", event.getDeviceProperty().getLabel(), event.getDevice(), event.getCloudBaseInMeter());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultWindSpeedUpdatedPropertyEvent event) {
+    writeFloatValue("windspeed", event.getDeviceProperty().getLabel(), event.getDevice(), event.getKilometerPerHour());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultWindGustSpeedUpdatedPropertyEvent event) {
+    writeFloatValue("windgustspeed", event.getDeviceProperty().getLabel(), event.getDevice(), event.getKilometerPerHour());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultWindDirectionUpdatedPropertyEvent event) {
+    writeFloatValue("winddirection", event.getDeviceProperty().getLabel(), event.getDevice(), event.getDegree());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultWindGustDirectionUpdatedPropertyEvent event) {
+    writeFloatValue("windgustdirection", event.getDeviceProperty().getLabel(), event.getDevice(), event.getDegree());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultWindRunUpdatedPropertyEvent event) {
+    writeDoubleValue("windrun", event.getDeviceProperty().getLabel(), event.getDevice(), event.getKilometer());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultRainRateUpdatedPropertyEvent event) {
+    writeFloatValue("rainrate", event.getDeviceProperty().getLabel(), event.getDevice(), event.getMillimeterPerHour());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultRainIntervalAmountUpdatedPropertyEvent event) {
+    writeFloatValue("rainintervalamount", event.getDeviceProperty().getLabel(), event.getDevice(), event.getMillimeter());
+  }
+
+  @EventListener
+  public void handleEvent(DefaultRainTodayAmountUpdatedPropertyEvent event) {
+    writeFloatValue("raintodayamount", event.getDeviceProperty().getLabel(), event.getDevice(), event.getMillimeter());
+  }
+
+  private void writeIntValue(String category, String label, Device device, DataWithTimestamp<Integer> data) {
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
+        label,
         data.getValue(),
         data.getDateTime().toInstant());
   }
 
-  private void writeFloatValue(String category, Device device, DataWithTimestamp<Float> data) {
+  private void writeFloatValue(String category, String label, Device device, DataWithTimestamp<Float> data) {
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
+        label,
         data.getValue(),
         data.getDateTime().toInstant());
   }
 
-  private void writeDoubleValue(String category, Device device, DataWithTimestamp<Double> data) {
+  private void writeDoubleValue(String category, String label, Device device, DataWithTimestamp<Double> data) {
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
+        label,
         data.getValue(),
         data.getDateTime().toInstant());
   }
 
-  private void writeBooleanValue(String category, Device device, DataWithTimestamp<Boolean> data) {
+  private void writeBooleanValue(String category, String label, Device device, DataWithTimestamp<Boolean> data) {
     deviceStateRepository.insert(deviceIdFromDevice(device),
         category,
+        label,
         data.getValue(),
         data.getDateTime().toInstant());
   }
