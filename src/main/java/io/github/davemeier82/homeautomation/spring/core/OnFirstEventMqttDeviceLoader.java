@@ -75,7 +75,7 @@ public class OnFirstEventMqttDeviceLoader {
   @EventListener
   public void loadDevices(MqttClientConnectedEvent event) {
     deviceFactories.forEach((rootTopic, factory) -> {
-      log.debug("subscribing for topic '{}' with factory '{}'", rootTopic, factory.getClass().getSimpleName());
+      log.debug("subscribing for topic '{}#' with factory '{}'", rootTopic, factory.getClass().getSimpleName());
       event.getClient().subscribe(rootTopic + "#", (topic, byteBuffer) -> createDevice(topic, factory, byteBuffer));
     });
   }

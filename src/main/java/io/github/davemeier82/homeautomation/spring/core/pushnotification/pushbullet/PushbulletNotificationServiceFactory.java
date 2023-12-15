@@ -17,10 +17,10 @@
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
 import io.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 /**
- * Factory to create a Pushbullet (https://www.pushbullet.com/) notification service.
+ * Factory to create a Pushbullet (<a href="https://www.pushbullet.com/">pushbullet.com</a>) notification service.
  *
  * @author David Meier
  * @since 0.1.0
@@ -28,21 +28,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class PushbulletNotificationServiceFactory {
 
   private final PushNotificationServiceRegistry pushNotificationServiceRegistry;
-  private final WebClient webClient;
+  private final RestClient restClient;
 
   /**
    * Constructor.
    *
    * @param pushNotificationServiceRegistry the registry to register this service
-   * @param webClient                       webclient for REST calls
+   * @param restClient                      restClient for REST calls
    * @param pushbulletConfiguration         the configuration
    */
   public PushbulletNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
-                                              WebClient webClient,
+                                              RestClient restClient,
                                               PushbulletConfiguration pushbulletConfiguration
   ) {
     this.pushNotificationServiceRegistry = pushNotificationServiceRegistry;
-    this.webClient = webClient;
+    this.restClient = restClient;
     pushbulletConfiguration.credentials().forEach(credential -> createAndAddToRegistry(credential.id(), credential.token()));
   }
 
@@ -53,7 +53,7 @@ public class PushbulletNotificationServiceFactory {
    * @return the service
    */
   public PushbulletService create(String token) {
-    return new PushbulletService(webClient, token);
+    return new PushbulletService(restClient, token);
   }
 
   /**

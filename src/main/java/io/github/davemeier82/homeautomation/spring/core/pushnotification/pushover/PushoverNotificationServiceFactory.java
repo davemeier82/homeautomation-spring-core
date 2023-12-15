@@ -17,10 +17,10 @@
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
 
 import io.github.davemeier82.homeautomation.spring.core.pushnotification.PushNotificationServiceRegistry;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 
 /**
- * Factory to create a Pushover (https://pushover.net/) notification service.
+ * Factory to create a Pushover (<a href="https://pushover.net/">pushover.net</a>) notification service.
  *
  * @author David Meier
  * @since 0.1.0
@@ -28,21 +28,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class PushoverNotificationServiceFactory {
 
   private final PushNotificationServiceRegistry pushNotificationServiceRegistry;
-  private final WebClient webClient;
+  private final RestClient restClient;
 
   /**
    * Constructor
    *
    * @param pushNotificationServiceRegistry the registry to register this service
-   * @param webClient                       webclient for REST calls
+   * @param restClient                      rest client for REST calls
    * @param pushoverConfiguration           the configuration
    */
   public PushoverNotificationServiceFactory(PushNotificationServiceRegistry pushNotificationServiceRegistry,
-                                            WebClient webClient,
+                                            RestClient restClient,
                                             PushoverConfiguration pushoverConfiguration
   ) {
     this.pushNotificationServiceRegistry = pushNotificationServiceRegistry;
-    this.webClient = webClient;
+    this.restClient = restClient;
     pushoverConfiguration.credentials().forEach(credential -> createAndAddToRegistry(credential.id(), credential.user(), credential.token()));
   }
 
@@ -54,7 +54,7 @@ public class PushoverNotificationServiceFactory {
    * @return the service
    */
   public PushoverService create(String user, String token) {
-    return new PushoverService(webClient, user, token);
+    return new PushoverService(restClient, user, token);
   }
 
   /**

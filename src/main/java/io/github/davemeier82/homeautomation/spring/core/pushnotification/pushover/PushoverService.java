@@ -19,13 +19,13 @@ package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushov
 import io.github.davemeier82.homeautomation.core.PushNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
 /**
- * Implementation of {@link PushNotificationService} for Pushover (https://pushover.net/).
+ * Implementation of {@link PushNotificationService} for Pushover (<a href="https://pushover.net/">pushover.net</a>).
  *
  * @author David Meier
  * @since 0.1.0
@@ -33,19 +33,19 @@ import java.net.URI;
 public class PushoverService implements PushNotificationService {
   private static final Logger log = LoggerFactory.getLogger(PushoverService.class);
   private static final URI PUSHOVER_URI = URI.create("https://api.pushover.net/1/messages.json");
-  private final WebClient webClient;
+  private final RestClient restClient;
   private final String user;
   private final String token;
 
   /**
    * Constructor.
    *
-   * @param webClient the web client for REST calls
+   * @param restClient the rest client for REST calls
    * @param user      username
    * @param token     authentication token
    */
-  public PushoverService(WebClient webClient, String user, String token) {
-    this.webClient = webClient;
+  public PushoverService(RestClient restClient, String user, String token) {
+    this.restClient = restClient;
     this.user = user;
     this.token = token;
   }
@@ -58,9 +58,10 @@ public class PushoverService implements PushNotificationService {
         .queryParam("message", message)
         .queryParam("title", title)
         .build().toUri();
-    webClient.post()
+    String body = restClient.post()
         .uri(uri)
-        .retrieve().bodyToMono(String.class).subscribe(log::trace);
+        .retrieve().body(String.class);
+    log.trace(body);
   }
 
 }
