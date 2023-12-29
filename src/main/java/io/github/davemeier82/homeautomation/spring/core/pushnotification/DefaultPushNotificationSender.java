@@ -16,8 +16,8 @@
 
 package io.github.davemeier82.homeautomation.spring.core.pushnotification;
 
-import io.github.davemeier82.homeautomation.core.device.DeviceId;
 import io.github.davemeier82.homeautomation.core.event.DevicePropertyEvent;
+import io.github.davemeier82.homeautomation.core.repositories.DeviceRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
@@ -34,7 +34,8 @@ import java.util.Locale;
  */
 public class DefaultPushNotificationSender {
 
-  private final PushNotificationServiceRegistry registry;
+  private final PushNotificationServiceRegistry pushNotificationServiceRegistry;
+  private final DeviceRepository deviceRepository;
   private final MessageSource messageSource;
   private final Locale locale;
 
@@ -42,14 +43,17 @@ public class DefaultPushNotificationSender {
    * Constructor.
    *
    * @param pushNotificationServiceRegistry the push notification service registry
+   * @param deviceRepository                the device repository
    * @param pushNotificationMessageSource   the message source to translate the push notification messages
    * @param defaultLocale                   the default locale for the translation
    */
   public DefaultPushNotificationSender(PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                       DeviceRepository deviceRepository,
                                        MessageSource pushNotificationMessageSource,
                                        String defaultLocale
   ) {
-    registry = pushNotificationServiceRegistry;
+    this.deviceRepository = deviceRepository;
+    this.pushNotificationServiceRegistry = pushNotificationServiceRegistry;
     messageSource = pushNotificationMessageSource;
     locale = Locale.forLanguageTag(defaultLocale);
   }
@@ -63,8 +67,10 @@ public class DefaultPushNotificationSender {
   @EventListener
   public void handleEvent(DevicePropertyEvent event) {
     if (event.hasPreviousValue()) {
-      registry.getBy(event.getClass(), DeviceId.deviceIdFromDevice(event.getDeviceProperty().getDevice()))
-          .forEach(service -> service.sendTextMessage(event.getDeviceProperty().getDevice().getDisplayName(), translate(event)));
+      deviceRepository.getByDeviceId(event.getDevicePropertyId().deviceId())
+          .ifPresent(device ->
+              pushNotificationServiceRegistry.getBy(event.getClass(), event.getDevicePropertyId().deviceId())
+                  .forEach(service -> service.sendTextMessage(device.getDisplayName(), translate(event))));
     }
   }
 
@@ -75,7 +81,7 @@ public class DefaultPushNotificationSender {
    */
   @EventListener
   public void handleEvent(ApplicationEvent event) {
-    registry.getBy(event.getClass()).forEach(service -> service.sendTextMessage(event.getClass().getSimpleName(), event.toString()));
+    pushNotificationServiceRegistry.getBy(event.getClass()).forEach(service -> service.sendTextMessage(event.getClass().getSimpleName(), event.toString()));
   }
 
   private String translate(DevicePropertyEvent event) {

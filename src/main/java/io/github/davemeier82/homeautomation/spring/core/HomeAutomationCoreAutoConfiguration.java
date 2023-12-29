@@ -17,12 +17,14 @@
 package io.github.davemeier82.homeautomation.spring.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.davemeier82.homeautomation.core.DeviceStateRepository;
 import io.github.davemeier82.homeautomation.core.device.DeviceFactory;
 import io.github.davemeier82.homeautomation.core.event.EventPublisher;
 import io.github.davemeier82.homeautomation.core.event.factory.DefaultEventFactory;
 import io.github.davemeier82.homeautomation.core.event.factory.EventFactory;
 import io.github.davemeier82.homeautomation.core.mqtt.MqttClient;
+import io.github.davemeier82.homeautomation.core.repositories.DevicePropertyRepository;
+import io.github.davemeier82.homeautomation.core.repositories.DeviceRepository;
+import io.github.davemeier82.homeautomation.core.repositories.DeviceStateRepository;
 import io.github.davemeier82.homeautomation.spring.core.config.device.DeviceConfigFactory;
 import io.github.davemeier82.homeautomation.spring.core.config.device.DeviceConfigWriter;
 import io.github.davemeier82.homeautomation.spring.core.config.device.DeviceLoader;
@@ -95,10 +97,11 @@ public class HomeAutomationCoreAutoConfiguration {
   @Bean
   @ConditionalOnProperty(prefix = "notification.push.default-sender", name = "enabled", havingValue = "true")
   DefaultPushNotificationSender defaultPushNotificationSender(PushNotificationServiceRegistry pushNotificationServiceRegistry,
+                                                              DeviceRepository deviceRepository,
                                                               MessageSource pushNotificationMessageSource,
                                                               @Value("${notification.push.translation.properties.defaultLocale:en}") String defaultLocale
   ) {
-    return new DefaultPushNotificationSender(pushNotificationServiceRegistry, pushNotificationMessageSource, defaultLocale);
+    return new DefaultPushNotificationSender(pushNotificationServiceRegistry, deviceRepository, pushNotificationMessageSource, defaultLocale);
   }
 
   @Bean
@@ -122,8 +125,14 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  DeviceRegistry deviceRegistry(EventPublisher eventPublisher) {
+  DeviceRepository deviceRegistry(EventPublisher eventPublisher) {
     return new DeviceRegistry(eventPublisher);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  DevicePropertyRepository devicePropertyRepository(DeviceRepository deviceRepository) {
+    return new DevicePropertyRegistry(deviceRepository);
   }
 
   @Bean
@@ -179,8 +188,8 @@ public class HomeAutomationCoreAutoConfiguration {
 
   @Bean
   @ConditionalOnBean(DeviceStateRepository.class)
-  DeviceStatePersistenceHandler deviceStatePersistenceHandler(DeviceStateRepository deviceStateRepository) {
-    return new DeviceStatePersistenceHandler(deviceStateRepository);
+  DeviceStatePersistenceHandler deviceStatePersistenceHandler(DeviceStateRepository deviceStateRepository, DevicePropertyRepository devicePropertyRepository) {
+    return new DeviceStatePersistenceHandler(deviceStateRepository, devicePropertyRepository);
   }
 
   @Bean

@@ -20,6 +20,7 @@ import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.device.DeviceId;
 import io.github.davemeier82.homeautomation.core.event.EventPublisher;
 import io.github.davemeier82.homeautomation.core.event.NewDeviceCreatedEvent;
+import io.github.davemeier82.homeautomation.core.repositories.DeviceRepository;
 import io.github.davemeier82.homeautomation.spring.core.event.DeviceRegisteredEvent;
 import org.springframework.context.event.EventListener;
 
@@ -36,7 +37,7 @@ import static io.github.davemeier82.homeautomation.core.device.DeviceId.deviceId
  * @author David Meier
  * @since 0.1.0
  */
-public class DeviceRegistry {
+public class DeviceRegistry implements DeviceRepository {
 
   private final Map<DeviceId, Device> devices = new ConcurrentHashMap<>();
   private final EventPublisher eventPublisher;
@@ -48,6 +49,7 @@ public class DeviceRegistry {
   /**
    * @return all devices
    */
+  @Override
   public Set<Device> getDevices() {
     return Set.copyOf(devices.values());
   }
@@ -58,6 +60,7 @@ public class DeviceRegistry {
    * @param deviceId the id
    * @return the device
    */
+  @Override
   public Optional<Device> getByDeviceId(DeviceId deviceId) {
     return Optional.ofNullable(devices.get(deviceId));
   }
