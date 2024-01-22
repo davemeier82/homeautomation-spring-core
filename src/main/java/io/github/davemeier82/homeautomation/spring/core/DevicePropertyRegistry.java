@@ -39,11 +39,9 @@ public class DevicePropertyRegistry implements DevicePropertyRepository {
 
   @Override
   public Optional<DeviceProperty> getByDevicePropertyId(DevicePropertyId devicePropertyId) {
-    List<DeviceProperty> deviceProperties = getByDeviceId(devicePropertyId.deviceId());
-    if (deviceProperties.size() > devicePropertyId.id()) {
-      return Optional.ofNullable(deviceProperties.get(devicePropertyId.id()));
-    }
-    return Optional.empty();
+    return getByDeviceId(devicePropertyId.deviceId())
+        .stream().filter(deviceProperty -> deviceProperty.getId() == devicePropertyId.id())
+        .findFirst();
   }
 
   @Override
@@ -59,6 +57,16 @@ public class DevicePropertyRegistry implements DevicePropertyRepository {
   public Set<DeviceProperty> getByType(String type) {
     return deviceRepository.getDevices().stream().flatMap(device -> device.getDeviceProperties().stream())
         .filter(deviceProperty -> deviceProperty.getType().equals(type))
+        .collect(toSet());
+  }
+
+  @Override
+  public <T extends DeviceProperty> Set<T> getByClass(Class<T> clazz) {
+    //noinspection unchecked
+    return deviceRepository.getDevices().stream()
+        .flatMap(device -> device.getDeviceProperties().stream())
+        .filter(deviceProperty -> clazz.isAssignableFrom(deviceProperty.getClass()))
+        .map(deviceProperty -> (T) deviceProperty)
         .collect(toSet());
   }
 }
