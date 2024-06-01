@@ -17,31 +17,26 @@
 package io.github.davemeier82.homeautomation.spring.core;
 
 import io.github.davemeier82.homeautomation.core.device.mqtt.MqttSubscriber;
-import io.github.davemeier82.homeautomation.core.event.MqttClientConnectedEvent;
 import io.github.davemeier82.homeautomation.core.mqtt.MqttClient;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Set;
 
-public class MqttClientConnector {
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
-  private final MqttClient mqttClient;
-  private final Set<MqttSubscriber> mqttSubscribers;
+@Configuration
+@AutoConfigureOrder(LOWEST_PRECEDENCE)
+public class HomeAutomationCoreMqttAutoConfiguration {
 
-  public MqttClientConnector(MqttClient mqttClient, Set<MqttSubscriber> mqttSubscribers) {
-    this.mqttClient = mqttClient;
-    this.mqttSubscribers = mqttSubscribers;
-  }
-
-  @EventListener(ApplicationReadyEvent.class)
-  public void connectClient() {
-    mqttClient.connect();
-  }
-
-  @EventListener(MqttClientConnectedEvent.class)
-  public void subscribeMqttSubscribers(MqttClientConnectedEvent event) {
-    mqttSubscribers.forEach(s -> event.getClient().subscribe(s.getTopic(), s::processMessage));
+  @Bean
+  @ConditionalOnBean(MqttClient.class)
+  @ConditionalOnMissingBean
+  MqttClientConnector mqttClientConnector(MqttClient mqttClient, Set<MqttSubscriber> mqttSubscribers) {
+    return new MqttClientConnector(mqttClient, mqttSubscribers);
   }
 
 }

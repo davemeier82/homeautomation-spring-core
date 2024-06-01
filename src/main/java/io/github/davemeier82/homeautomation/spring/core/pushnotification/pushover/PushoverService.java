@@ -16,51 +16,58 @@
 
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
 
-import io.github.davemeier82.homeautomation.core.PushNotificationService;
+import io.github.davemeier82.homeautomation.core.notification.PushNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
-/**
- * Implementation of {@link PushNotificationService} for Pushover (<a href="https://pushover.net/">pushover.net</a>).
- *
- * @author David Meier
- * @since 0.1.0
- */
+import static java.util.stream.Collectors.toMap;
+
 public class PushoverService implements PushNotificationService {
   private static final Logger log = LoggerFactory.getLogger(PushoverService.class);
   private static final URI PUSHOVER_URI = URI.create("https://api.pushover.net/1/messages.json");
   private final RestClient restClient;
-  private final String user;
-  private final String token;
+  private final Map<String, PushoverCredential> idToProperties;
 
-  /**
-   * Constructor.
-   *
-   * @param restClient the rest client for REST calls
-   * @param user      username
-   * @param token     authentication token
-   */
-  public PushoverService(RestClient restClient, String user, String token) {
+
+  public PushoverService(RestClient restClient, PushoverConfiguration configuration) {
     this.restClient = restClient;
-    this.user = user;
-    this.token = token;
+    idToProperties = configuration.credentials().stream().collect(toMap(PushoverCredential::id, Function.identity()));
   }
 
   @Override
-  public void sendTextMessage(String title, String message) {
+  public Set<String> getServiceIds() {
+    return idToProperties.keySet();
+  }
+
+  @Override
+  public void sendTextMessageToAllServices(String title, String message) {
+    idToProperties.values().forEach(p -> sendTextMessage(p, title, message));
+  }
+
+  @Override
+  public void sendTextMessageToServiceWithId(String serviceId, String title, String message) {
+    sendTextMessage(idToProperties.get(serviceId), title, message);
+
+
+  }
+
+  private void sendTextMessage(PushoverCredential credential, String title, String message) {
     URI uri = UriComponentsBuilder.newInstance().uri(PUSHOVER_URI)
-        .queryParam("token", token)
-        .queryParam("user", user)
-        .queryParam("message", message)
-        .queryParam("title", title)
-        .build().toUri();
+                                  .queryParam("token", credential.token())
+                                  .queryParam("user", credential.user())
+                                  .queryParam("message", message)
+                                  .queryParam("title", title)
+                                  .build().toUri();
     String body = restClient.post()
-        .uri(uri)
-        .retrieve().body(String.class);
+                            .uri(uri)
+                            .retrieve().body(String.class);
     log.trace(body);
   }
 

@@ -16,47 +16,53 @@
 
 package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushbullet;
 
-import io.github.davemeier82.homeautomation.core.PushNotificationService;
+import io.github.davemeier82.homeautomation.core.notification.PushNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClient;
 
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-/**
- * Implementation of {@link PushNotificationService} for Pushbullet (<a href="https://www.pushbullet.com/">Pushbullet.com</a>).
- *
- * @author David Meier
- * @since 0.1.0
- */
 public class PushbulletService implements PushNotificationService {
 
   private static final Logger log = LoggerFactory.getLogger(PushbulletService.class);
   private static final String PUSHBULLET_URI = "https://api.pushbullet.com/v2/pushes";
   private final RestClient restClient;
-  private final String token;
+  private final Map<String, String> serviceIdToToken;
 
-  /**
-   * Constructor.
-   *
-   * @param restClient the rest client for REST calls
-   * @param token     the authentication token
-   */
-  public PushbulletService(RestClient restClient, String token) {
+  public PushbulletService(RestClient restClient, PushbulletConfiguration configuration) {
     this.restClient = restClient;
-    this.token = token;
+    serviceIdToToken = configuration.credentials().stream().collect(toMap(PushbulletCredential::id, PushbulletCredential::token));
   }
 
   @Override
-  public void sendTextMessage(String title, String message) {
+  public Set<String> getServiceIds() {
+    return serviceIdToToken.keySet();
+  }
+
+  @Override
+  public void sendTextMessageToAllServices(String title, String message) {
+    serviceIdToToken.values().forEach(token -> sendTextMessage(token, title, message));
+  }
+
+  @Override
+  public void sendTextMessageToServiceWithId(String serviceId, String title, String message) {
+    sendTextMessage(serviceIdToToken.get(serviceId), title, message);
+  }
+
+  private void sendTextMessage(String token, String title, String message) {
     String body = restClient.post()
-        .uri(PUSHBULLET_URI)
-        .header("Access-Token", token)
-        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .body(new PushbulletNote(title, message))
-        .retrieve()
-        .body(String.class);
+                            .uri(PUSHBULLET_URI)
+                            .header("Access-Token", token)
+                            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                            .body(new PushbulletNote(title, message))
+                            .retrieve()
+                            .body(String.class);
     log.trace(body);
   }
 

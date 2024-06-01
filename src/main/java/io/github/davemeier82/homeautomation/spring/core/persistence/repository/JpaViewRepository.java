@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2021 the original author or authors.
+ * Copyright 2021-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.davemeier82.homeautomation.spring.core.pushnotification.pushover;
+package io.github.davemeier82.homeautomation.spring.core.persistence.repository;
 
-public record PushoverCredential(String id, String user, String token) {
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@NoRepositoryBean
+public interface JpaViewRepository<T, K> extends Repository<T, K> {
+  long count();
+
+  boolean existsById(K id);
+
+  List<T> findAll();
+
+  List<T> findAllById(Iterable<K> ids);
+
+  Optional<T> findById(K id);
 }

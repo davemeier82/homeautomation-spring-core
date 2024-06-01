@@ -1,1 +1,6 @@
 io.github.davemeier82.homeautomation.spring.core.HomeAutomationCoreAutoConfiguration
+io.github.davemeier82.homeautomation.spring.core.HomeAutomationCoreDeviceAutoConfiguration
+io.github.davemeier82.homeautomation.spring.core.HomeAutomationCoreMqttAutoConfiguration
+io.github.davemeier82.homeautomation.spring.core.HomeAutomationCorePersistenceAutoConfiguration
+io.github.davemeier82.homeautomation.spring.core.HomeAutomationCorePushNotificationAutoConfiguration
+io.github.davemeier82.homeautomation.spring.core.HomeAutomationCoreValueUpdateServiceAutoConfiguration

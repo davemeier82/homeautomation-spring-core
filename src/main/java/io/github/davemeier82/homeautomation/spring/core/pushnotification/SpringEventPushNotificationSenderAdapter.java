@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.davemeier82.homeautomation.spring.core;
+package io.github.davemeier82.homeautomation.spring.core.pushnotification;
 
 import io.github.davemeier82.homeautomation.core.event.DevicePropertyEvent;
-import io.github.davemeier82.homeautomation.core.repositories.DevicePropertyValueRepository;
+import io.github.davemeier82.homeautomation.core.notification.EventPushNotificationSender;
 import org.springframework.context.event.EventListener;
 
-import java.util.Set;
 
-public class DeviceStatePersistenceHandler {
-  private final Set<DevicePropertyValueRepository> devicePropertyValueRepositories;
+public class SpringEventPushNotificationSenderAdapter {
 
-  public DeviceStatePersistenceHandler(Set<DevicePropertyValueRepository> devicePropertyValueRepositories) {
-    this.devicePropertyValueRepositories = devicePropertyValueRepositories;
+  private final EventPushNotificationSender eventPushNotificationSender;
+
+  public SpringEventPushNotificationSenderAdapter(EventPushNotificationSender eventPushNotificationSender) {
+    this.eventPushNotificationSender = eventPushNotificationSender;
   }
+
 
   @EventListener
   public void handleEvent(DevicePropertyEvent<?> event) {
-    devicePropertyValueRepositories.forEach(r -> r.insert(event.getDevicePropertyId(), event.getValueType(), event.getDisplayName(), event.getNewValue(), event.getNewTimestamp()));
+    if (event.hasPreviousValue()) {
+      eventPushNotificationSender.sendNotifications(event);
+    }
   }
 
 }
