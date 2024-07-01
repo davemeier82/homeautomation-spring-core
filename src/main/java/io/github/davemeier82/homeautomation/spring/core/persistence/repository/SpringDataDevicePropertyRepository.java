@@ -25,6 +25,7 @@ import io.github.davemeier82.homeautomation.core.repositories.DevicePropertyRepo
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DevicePropertyEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DevicePropertyEntityMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
+@Transactional
 public class SpringDataDevicePropertyRepository implements DevicePropertyRepository {
 
   private final JpaDevicePropertyRepository jpaDevicePropertyRepository;

@@ -23,10 +23,12 @@ import io.github.davemeier82.homeautomation.core.event.DataWithTimestamp;
 import io.github.davemeier82.homeautomation.core.repositories.DevicePropertyValueRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DevicePropertyValueEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DevicePropertyValueEntityMapper;
+import jakarta.transaction.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+@Transactional
 public class SpringDataDevicePropertyValueRepository implements DevicePropertyValueRepository {
 
   private final JpaDevicePropertyValueRepository devicePropertyValueRepository;
