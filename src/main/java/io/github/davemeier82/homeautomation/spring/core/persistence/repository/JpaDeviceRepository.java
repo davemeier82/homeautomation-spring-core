@@ -21,12 +21,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface JpaDeviceRepository extends JpaRepository<DeviceEntity, UUID> {
 
   Optional<DeviceEntity> findByDeviceIdAndDeviceType(String deviceId, String deviceType);
+
+  Set<DeviceEntity> findAllByDeviceType(String deviceType);
 
   void deleteByDeviceIdAndDeviceType(String deviceId, String deviceType);
 }

@@ -57,6 +57,7 @@
 
     <properties>
         <homeautomation-core.version>0.5.4-SNAPSHOT</homeautomation-core.version>
+        <shedlock.version>5.13.0</shedlock.version>
     </properties>
 
     <dependencies>
@@ -96,6 +97,16 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>${shedlock.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

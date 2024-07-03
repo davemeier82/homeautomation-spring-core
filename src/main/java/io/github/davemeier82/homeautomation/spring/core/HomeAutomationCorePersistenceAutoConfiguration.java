@@ -40,6 +40,9 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.repository.S
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.SpringDataDevicePropertyValueRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.SpringDataDeviceRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.SpringDataEventPushNotificationConfigRepository;
+import net.javacrumbs.shedlock.core.LockProvider;
+import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,8 +51,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.sql.DataSource;
 import java.util.Set;
 
 @Configuration
@@ -58,6 +63,8 @@ import java.util.Set;
 @EnableJpaRepositories(basePackages = "io.github.davemeier82.homeautomation.spring.core.persistence.repository")
 @ComponentScan(basePackages = "io.github.davemeier82.homeautomation.spring.core.persistence.repository")
 @EntityScan("io.github.davemeier82.homeautomation.spring.core.persistence.entity")
+@EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "PT30S")
 public class HomeAutomationCorePersistenceAutoConfiguration {
 
   @Bean
@@ -138,5 +145,11 @@ public class HomeAutomationCorePersistenceAutoConfiguration {
                                                                                   DevicePropertyValueEntityMapper devicePropertyValueEntityMapper
   ) {
     return new SpringDataDevicePropertyValueRepository(devicePropertyValueRepository, devicePropertyRepository, deviceTypeMapper, devicePropertyValueEntityMapper);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public LockProvider lockProvider(DataSource dataSource) {
+    return new JdbcTemplateLockProvider(dataSource);
   }
 }

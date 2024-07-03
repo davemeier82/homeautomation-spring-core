@@ -18,6 +18,7 @@ package io.github.davemeier82.homeautomation.spring.core.persistence.repository;
 
 import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.device.DeviceId;
+import io.github.davemeier82.homeautomation.core.device.DeviceType;
 import io.github.davemeier82.homeautomation.core.device.DeviceTypeMapper;
 import io.github.davemeier82.homeautomation.core.repositories.DeviceRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceEntity;
@@ -65,5 +66,13 @@ public class SpringDataDeviceRepository implements DeviceRepository {
   @Override
   public void delete(DeviceId deviceId) {
     jpaDeviceRepository.deleteByDeviceIdAndDeviceType(deviceId.id(), deviceId.type().getTypeName());
+  }
+
+  @Override
+  public <T> Set<? extends T> getDeviceByType(DeviceType deviceType, Class<T> clazz) {
+    return jpaDeviceRepository.findAllByDeviceType(deviceType.getTypeName()).stream()
+                              .map(deviceEntityMapper::map)
+                              .map(clazz::cast)
+                              .collect(toSet());
   }
 }
