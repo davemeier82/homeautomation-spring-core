@@ -18,6 +18,7 @@ package io.github.davemeier82.homeautomation.spring.core.persistence.mapper;
 
 import io.github.davemeier82.homeautomation.core.device.Device;
 import io.github.davemeier82.homeautomation.core.device.DeviceFactory;
+import io.github.davemeier82.homeautomation.core.device.DeviceId;
 import io.github.davemeier82.homeautomation.core.device.DeviceType;
 import io.github.davemeier82.homeautomation.core.device.DeviceTypeMapper;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.CustomIdentifierEntity;
@@ -25,9 +26,12 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.entity.Custo
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceParameterEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceParameterId;
+import org.springframework.data.util.Pair;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -69,14 +73,48 @@ public class DeviceEntityMapper {
     return entity;
   }
 
+  private static Set<DeviceParameterEntity> updateParameters(Set<DeviceParameterEntity> parameterEntities, Map<String, String> parameters, UUID deviceId) {
+    Map<DeviceParameterId, DeviceParameterEntity> parameterById = parameterEntities.stream().collect(toMap(DeviceParameterEntity::getId, Function.identity()));
+    Set<DeviceParameterEntity> updatedParameters = new HashSet<>();
+    parameters.forEach((key, value) -> {
+      var id = new DeviceParameterId(deviceId, key);
+      DeviceParameterEntity deviceParameterEntity = parameterById.get(id);
+      if (deviceParameterEntity == null) {
+        deviceParameterEntity = new DeviceParameterEntity(id, value);
+      }
+      updatedParameters.add(deviceParameterEntity);
+    });
+    return updatedParameters;
+  }
+
+  private static Set<CustomIdentifierEntity> updateIdentifiers(Set<CustomIdentifierEntity> identifierEntities, Map<String, String> identifiers, UUID deviceId) {
+    Map<CustomIdentifierId, CustomIdentifierEntity> identifierById = identifierEntities.stream().collect(toMap(CustomIdentifierEntity::getId, Function.identity()));
+    Set<CustomIdentifierEntity> updatedIdentifiers = new HashSet<>();
+    identifiers.forEach((key, value) -> {
+      var id = new CustomIdentifierId(deviceId, key);
+      CustomIdentifierEntity customIdentifierEntity = identifierById.get(id);
+      if (customIdentifierEntity == null) {
+        customIdentifierEntity = new CustomIdentifierEntity(id, value);
+      } else {
+        customIdentifierEntity.setValue(value);
+      }
+      updatedIdentifiers.add(customIdentifierEntity);
+    });
+    return updatedIdentifiers;
+  }
+
   public DeviceEntity update(DeviceEntity entity, Device device) {
     entity.setDisplayName(device.getDisplayName());
-
-    entity.clearDeviceParameters();
-    entity.clearCustomIdentifiers();
-    mapParametersAndIdentifiers(entity, device);
-
+    entity.setDeviceParameters(updateParameters(entity.getDeviceParameters(), device.getParameters(), entity.getId()));
+    entity.setCustomIdentifiers(updateIdentifiers(entity.getCustomIdentifiers(), device.getCustomIdentifiers(), entity.getId()));
     return entity;
+  }
+
+  public Map.Entry<DeviceId, Pair<String, String>> map(CustomIdentifierEntity entity) {
+    DeviceEntity device = entity.getDevice();
+    DeviceType deviceType = deviceTypeMapper.map(device.getDeviceType());
+    DeviceId deviceId = new DeviceId(device.getDeviceId(), deviceType);
+    return Map.entry(deviceId, Pair.of(entity.getId().getName(), entity.getValue()));
   }
 
 }

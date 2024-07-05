@@ -32,6 +32,7 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.Devic
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DevicePropertyEntityMapper;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DevicePropertyValueEntityMapper;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.EventPushNotificationConfigEntityMapper;
+import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaCustomIdentifierRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDevicePropertyRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDevicePropertyValueRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDeviceRepository;
@@ -69,8 +70,12 @@ public class HomeAutomationCorePersistenceAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  DeviceRepository deviceRepository(JpaDeviceRepository jpaDeviceRepository, DeviceEntityMapper deviceEntityMapper, DeviceTypeMapper deviceTypeMapper) {
-    return new SpringDataDeviceRepository(jpaDeviceRepository, deviceEntityMapper, deviceTypeMapper);
+  DeviceRepository deviceRepository(JpaDeviceRepository jpaDeviceRepository,
+                                    JpaCustomIdentifierRepository jpaCustomIdentifierRepository,
+                                    DeviceEntityMapper deviceEntityMapper,
+                                    DeviceTypeMapper deviceTypeMapper
+  ) {
+    return new SpringDataDeviceRepository(jpaDeviceRepository, jpaCustomIdentifierRepository, deviceEntityMapper, deviceTypeMapper);
   }
 
   @Bean

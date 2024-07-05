@@ -94,9 +94,9 @@ public class DeviceEntity {
     return deviceParameters;
   }
 
-  public void clearDeviceParameters() {
-    deviceParameters.forEach(p -> p.setDevice(null));
-    deviceParameters.clear();
+  public void setDeviceParameters(Set<DeviceParameterEntity> deviceParameters) {
+    this.deviceParameters.clear();
+    deviceParameters.forEach(this::addDeviceParameter);
   }
 
   public void addCustomIdentifier(CustomIdentifierEntity entity) {
@@ -109,9 +109,9 @@ public class DeviceEntity {
     entity.setDevice(null);
   }
 
-  public void clearCustomIdentifiers() {
-    customIdentifiers.forEach(i -> i.setDevice(null));
-    customIdentifiers.clear();
+  public void setCustomIdentifiers(Set<CustomIdentifierEntity> customIdentifiers) {
+    this.customIdentifiers.clear();
+    customIdentifiers.forEach(this::addCustomIdentifier);
   }
 
   public Set<CustomIdentifierEntity> getCustomIdentifiers() {

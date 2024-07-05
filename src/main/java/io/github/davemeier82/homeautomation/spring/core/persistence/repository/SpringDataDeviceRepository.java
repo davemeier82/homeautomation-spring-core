@@ -25,6 +25,8 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.entity.Devic
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DeviceEntityMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,11 +36,17 @@ import static java.util.stream.Collectors.toSet;
 public class SpringDataDeviceRepository implements DeviceRepository {
 
   private final JpaDeviceRepository jpaDeviceRepository;
+  private final JpaCustomIdentifierRepository jpaCustomIdentifierRepository;
   private final DeviceEntityMapper deviceEntityMapper;
   private final DeviceTypeMapper deviceTypeMapper;
 
-  public SpringDataDeviceRepository(JpaDeviceRepository jpaDeviceRepository, DeviceEntityMapper deviceEntityMapper, DeviceTypeMapper deviceTypeMapper) {
+  public SpringDataDeviceRepository(JpaDeviceRepository jpaDeviceRepository,
+                                    JpaCustomIdentifierRepository jpaCustomIdentifierRepository,
+                                    DeviceEntityMapper deviceEntityMapper,
+                                    DeviceTypeMapper deviceTypeMapper
+  ) {
     this.jpaDeviceRepository = jpaDeviceRepository;
+    this.jpaCustomIdentifierRepository = jpaCustomIdentifierRepository;
     this.deviceEntityMapper = deviceEntityMapper;
     this.deviceTypeMapper = deviceTypeMapper;
   }
@@ -74,5 +82,23 @@ public class SpringDataDeviceRepository implements DeviceRepository {
                               .map(deviceEntityMapper::map)
                               .map(clazz::cast)
                               .collect(toSet());
+  }
+
+  @Override
+  public Map<DeviceId, Map<String, String>> getAllCustomIdentifiers() {
+    return jpaCustomIdentifierRepository.findAll().stream().map(deviceEntityMapper::map)
+                                        .reduce(new HashMap<>(), (map, e) -> {
+                                              HashMap<String, String> newMap = new HashMap<>();
+                                              newMap.put(e.getValue().getFirst(), e.getValue().getSecond());
+                                              map.merge(e.getKey(), newMap, (m1, m2) -> {
+                                                m1.putAll(m2);
+                                                return m1;
+                                              });
+                                              return map;
+                                            },
+                                            (m, m2) -> {
+                                              m.putAll(m2);
+                                              return m;
+                                            });
   }
 }
