@@ -21,13 +21,14 @@ import io.github.davemeier82.homeautomation.core.event.DevicePropertyUpdatedEven
 import io.github.davemeier82.homeautomation.core.notification.EventPushNotificationConfig;
 import io.github.davemeier82.homeautomation.core.notification.EventPushNotificationConfigRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.EventPushNotificationConfigEntityMapper;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-@Transactional
+
+@Transactional(readOnly = true)
 public class SpringDataEventPushNotificationConfigRepository implements EventPushNotificationConfigRepository {
 
   private final JpaEventPushNotificationConfigRepository repository;

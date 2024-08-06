@@ -52,12 +52,14 @@ public class SpringDataDeviceRepository implements DeviceRepository {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Optional<Device> getByDeviceId(DeviceId deviceId) {
     String deviceType = deviceTypeMapper.map(deviceId.type());
     return jpaDeviceRepository.findByDeviceIdAndDeviceType(deviceId.id(), deviceType).map(deviceEntityMapper::map);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Set<Device> getDevices() {
     return jpaDeviceRepository.findAll().stream().map(deviceEntityMapper::map).collect(toSet());
   }
@@ -77,6 +79,7 @@ public class SpringDataDeviceRepository implements DeviceRepository {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public <T> Set<? extends T> getDeviceByType(DeviceType deviceType, Class<T> clazz) {
     return jpaDeviceRepository.findAllByDeviceType(deviceType.getTypeName()).stream()
                               .map(deviceEntityMapper::map)
@@ -85,6 +88,7 @@ public class SpringDataDeviceRepository implements DeviceRepository {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Map<DeviceId, Map<String, String>> getAllCustomIdentifiers() {
     return jpaCustomIdentifierRepository.findAll().stream().map(deviceEntityMapper::map)
                                         .reduce(new HashMap<>(), (map, e) -> {

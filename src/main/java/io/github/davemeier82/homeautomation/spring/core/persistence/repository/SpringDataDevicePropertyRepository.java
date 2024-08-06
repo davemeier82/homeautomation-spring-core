@@ -53,6 +53,7 @@ public class SpringDataDevicePropertyRepository implements DevicePropertyReposit
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Optional<DeviceProperty> findByDevicePropertyId(DevicePropertyId devicePropertyId) {
     DeviceId deviceId = devicePropertyId.deviceId();
     String deviceType = deviceTypeMapper.map(deviceId.type());
@@ -60,6 +61,7 @@ public class SpringDataDevicePropertyRepository implements DevicePropertyReposit
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<DeviceProperty> findByDeviceId(DeviceId deviceId) {
     String deviceType = deviceTypeMapper.map(deviceId.type());
     return jpaDeviceRepository.findByDeviceIdAndDeviceType(deviceId.id(), deviceType)
@@ -70,6 +72,7 @@ public class SpringDataDevicePropertyRepository implements DevicePropertyReposit
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Set<DeviceProperty> findByType(DevicePropertyType type) {
     return jpaDevicePropertyRepository.findAllByType(type.getTypeName()).stream().map(devicePropertyEntityMapper::map).collect(toSet());
   }

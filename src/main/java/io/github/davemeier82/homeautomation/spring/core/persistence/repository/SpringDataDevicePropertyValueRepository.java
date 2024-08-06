@@ -57,6 +57,7 @@ public class SpringDataDevicePropertyValueRepository implements DevicePropertyVa
   }
 
   @Override
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public <T> Optional<DataWithTimestamp<T>> findLatestValue(DevicePropertyId devicePropertyId, DevicePropertyValueType devicePropertyValueType, Class<T> clazz) {
     String deviceType = deviceTypeMapper.map(devicePropertyId.deviceId().type());
     return devicePropertyRepository.findByDevicePropertyIdAndDevice_DeviceIdAndDevice_DeviceType(devicePropertyId.id(), devicePropertyId.deviceId().id(), deviceType)
@@ -65,6 +66,7 @@ public class SpringDataDevicePropertyValueRepository implements DevicePropertyVa
   }
 
   @Override
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public Optional<OffsetDateTime> lastTimeValueMatched(DevicePropertyId devicePropertyId, DevicePropertyValueType devicePropertyValueType, Object value) {
     // TODO
     return Optional.empty();

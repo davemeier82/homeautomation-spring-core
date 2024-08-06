@@ -17,6 +17,7 @@
 package io.github.davemeier82.homeautomation.spring.core;
 
 import io.github.davemeier82.homeautomation.core.event.DevicePropertyEvent;
+import io.github.davemeier82.homeautomation.core.event.DevicePropertyUpdatedEvent;
 import io.github.davemeier82.homeautomation.core.repositories.DevicePropertyValueRepository;
 import org.springframework.context.event.EventListener;
 
@@ -31,7 +32,10 @@ public class DeviceStatePersistenceHandler {
 
   @EventListener
   public void handleEvent(DevicePropertyEvent<?> event) {
-    devicePropertyValueRepositories.forEach(r -> r.insert(event.getDevicePropertyId(), event.getValueType(), event.getDisplayName(), event.getNewValue(), event.getNewTimestamp()));
+    boolean isUpdateEvent = event instanceof DevicePropertyUpdatedEvent;
+    if (isUpdateEvent) {
+      devicePropertyValueRepositories.forEach(r -> r.insert(event.getDevicePropertyId(), event.getValueType(), event.getDisplayName(), event.getNewValue(), event.getNewTimestamp()));
+    }
   }
 
 }

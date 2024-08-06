@@ -20,13 +20,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-/**
- * Configuration for a <a href="https://pushover.net/">...</a> push notification service.
- *
- * @param credentials the credentials
- * @author David Meier
- * @since 0.1.0
- */
 @ConfigurationProperties(prefix = "pushover")
 public record PushoverConfiguration(List<PushoverCredential> credentials) {
 }
