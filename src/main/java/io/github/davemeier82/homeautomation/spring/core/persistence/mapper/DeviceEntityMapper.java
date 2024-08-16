@@ -117,4 +117,12 @@ public class DeviceEntityMapper {
     return Map.entry(deviceId, Pair.of(entity.getId().getName(), entity.getValue()));
   }
 
+
+  public Map.Entry<DeviceId, Pair<String, String>> map(DeviceParameterEntity entity) {
+    DeviceEntity device = entity.getDevice();
+    DeviceType deviceType = deviceTypeMapper.map(device.getDeviceType());
+    DeviceId deviceId = new DeviceId(device.getDeviceId(), deviceType);
+    return Map.entry(deviceId, Pair.of(entity.getId().getName(), entity.getValue()));
+  }
+
 }

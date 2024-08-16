@@ -61,7 +61,7 @@ public class SpringDataDevicePropertyValueRepository implements DevicePropertyVa
   public <T> Optional<DataWithTimestamp<T>> findLatestValue(DevicePropertyId devicePropertyId, DevicePropertyValueType devicePropertyValueType, Class<T> clazz) {
     String deviceType = deviceTypeMapper.map(devicePropertyId.deviceId().type());
     return devicePropertyRepository.findByDevicePropertyIdAndDevice_DeviceIdAndDevice_DeviceType(devicePropertyId.id(), devicePropertyId.deviceId().id(), deviceType)
-                                   .flatMap(entity -> devicePropertyValueRepository.findTopByDevicePropertyIdOrderByTimestampDesc(entity.getId()))
+                                   .flatMap(entity -> devicePropertyValueRepository.findTopByDevicePropertyIdAndTypeOrderByTimestampDesc(entity.getId(), devicePropertyValueType.getTypeName()))
                                    .flatMap(dp -> devicePropertyValueEntityMapper.map(dp, clazz));
   }
 
@@ -71,4 +71,10 @@ public class SpringDataDevicePropertyValueRepository implements DevicePropertyVa
     // TODO
     return Optional.empty();
   }
+
+  public void deleteAllBefore(OffsetDateTime timestamp) {
+    devicePropertyValueRepository.deleteAllByTimestampBefore(timestamp);
+  }
+
+
 }

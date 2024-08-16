@@ -33,6 +33,7 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.Devic
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DevicePropertyValueEntityMapper;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.EventPushNotificationConfigEntityMapper;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaCustomIdentifierRepository;
+import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDeviceParameterRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDevicePropertyRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDevicePropertyValueRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.JpaDeviceRepository;
@@ -43,6 +44,8 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.repository.S
 import io.github.davemeier82.homeautomation.spring.core.persistence.repository.SpringDataEventPushNotificationConfigRepository;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -55,6 +58,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.Set;
 
 @Configuration
@@ -64,16 +68,18 @@ import java.util.Set;
 @ComponentScan(basePackages = "io.github.davemeier82.homeautomation.spring.core.persistence.repository")
 @EntityScan("io.github.davemeier82.homeautomation.spring.core.persistence.entity")
 @EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "PT30S")
 public class HomeAutomationCorePersistenceAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
   DeviceRepository deviceRepository(JpaDeviceRepository jpaDeviceRepository,
                                     JpaCustomIdentifierRepository jpaCustomIdentifierRepository,
+                                    JpaDeviceParameterRepository jpaDeviceParameterRepository,
                                     DeviceEntityMapper deviceEntityMapper,
                                     DeviceTypeMapper deviceTypeMapper
   ) {
-    return new SpringDataDeviceRepository(jpaDeviceRepository, jpaCustomIdentifierRepository, deviceEntityMapper, deviceTypeMapper);
+    return new SpringDataDeviceRepository(jpaDeviceRepository, jpaCustomIdentifierRepository, jpaDeviceParameterRepository, deviceEntityMapper, deviceTypeMapper);
   }
 
   @Bean
@@ -154,5 +160,15 @@ public class HomeAutomationCorePersistenceAutoConfiguration {
   @ConditionalOnMissingBean
   public LockProvider lockProvider(DataSource dataSource) {
     return new JdbcTemplateLockProvider(dataSource);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnBean(SpringDataDevicePropertyValueRepository.class)
+  SpringDataDevicePropertyValueRepositoryHousekeeper springDataDevicePropertyValueRepositoryHousekeeper(SpringDataDevicePropertyValueRepository springDataDevicePropertyValueRepository,
+                                                                                                        @Value("${homeautomation.spring-core.device-property-value-repository.clean-up.duration:P90D}")
+                                                                                                        Duration deleteOlderThanDuration
+  ) {
+    return new SpringDataDevicePropertyValueRepositoryHousekeeper(springDataDevicePropertyValueRepository, deleteOlderThanDuration);
   }
 }

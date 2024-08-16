@@ -57,7 +57,6 @@ public class EventPushNotificationConfigEntityMapper {
 
     List<String> serviceIds = Optional.ofNullable(entity.getServiceIds()).map(ids -> Arrays.stream(ids.split(SERVICE_ID_SEPARATOR)).toList()).orElse(List.of());
 
-    return new EventPushNotificationConfig(deviceId, devicePropertyId, devicePropertyValueTypeFactory.createDevicePropertyValueType(entity.getPropertyValueType()).orElse(null),
-        entity.isOnChangeOnly(), serviceIds);
+    return new EventPushNotificationConfig(deviceId, devicePropertyId, devicePropertyValueTypeFactory.createDevicePropertyValueType(entity.getPropertyValueType()).orElse(null), serviceIds);
   }
 }

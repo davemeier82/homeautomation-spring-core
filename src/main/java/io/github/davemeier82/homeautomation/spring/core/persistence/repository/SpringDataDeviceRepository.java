@@ -23,12 +23,14 @@ import io.github.davemeier82.homeautomation.core.device.DeviceTypeMapper;
 import io.github.davemeier82.homeautomation.core.repositories.DeviceRepository;
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DeviceEntityMapper;
+import org.springframework.data.util.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -37,16 +39,18 @@ public class SpringDataDeviceRepository implements DeviceRepository {
 
   private final JpaDeviceRepository jpaDeviceRepository;
   private final JpaCustomIdentifierRepository jpaCustomIdentifierRepository;
+  private final JpaDeviceParameterRepository jpaDeviceParameterRepository;
   private final DeviceEntityMapper deviceEntityMapper;
   private final DeviceTypeMapper deviceTypeMapper;
 
   public SpringDataDeviceRepository(JpaDeviceRepository jpaDeviceRepository,
-                                    JpaCustomIdentifierRepository jpaCustomIdentifierRepository,
+                                    JpaCustomIdentifierRepository jpaCustomIdentifierRepository, JpaDeviceParameterRepository jpaDeviceParameterRepository,
                                     DeviceEntityMapper deviceEntityMapper,
                                     DeviceTypeMapper deviceTypeMapper
   ) {
     this.jpaDeviceRepository = jpaDeviceRepository;
     this.jpaCustomIdentifierRepository = jpaCustomIdentifierRepository;
+    this.jpaDeviceParameterRepository = jpaDeviceParameterRepository;
     this.deviceEntityMapper = deviceEntityMapper;
     this.deviceTypeMapper = deviceTypeMapper;
   }
@@ -90,19 +94,28 @@ public class SpringDataDeviceRepository implements DeviceRepository {
   @Override
   @Transactional(readOnly = true)
   public Map<DeviceId, Map<String, String>> getAllCustomIdentifiers() {
-    return jpaCustomIdentifierRepository.findAll().stream().map(deviceEntityMapper::map)
-                                        .reduce(new HashMap<>(), (map, e) -> {
-                                              HashMap<String, String> newMap = new HashMap<>();
-                                              newMap.put(e.getValue().getFirst(), e.getValue().getSecond());
-                                              map.merge(e.getKey(), newMap, (m1, m2) -> {
-                                                m1.putAll(m2);
-                                                return m1;
-                                              });
-                                              return map;
-                                            },
-                                            (m, m2) -> {
-                                              m.putAll(m2);
-                                              return m;
-                                            });
+    return toMapByDevice(jpaCustomIdentifierRepository.findAll().stream().map(deviceEntityMapper::map));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Map<DeviceId, Map<String, String>> getAllParameters() {
+    return toMapByDevice(jpaDeviceParameterRepository.findAll().stream().map(deviceEntityMapper::map));
+  }
+
+  private HashMap<DeviceId, Map<String, String>> toMapByDevice(Stream<Map.Entry<DeviceId, Pair<String, String>>> entryStream) {
+    return entryStream.reduce(new HashMap<>(), (map, e) -> {
+          HashMap<String, String> newMap = new HashMap<>();
+          newMap.put(e.getValue().getFirst(), e.getValue().getSecond());
+          map.merge(e.getKey(), newMap, (m1, m2) -> {
+            m1.putAll(m2);
+            return m1;
+          });
+          return map;
+        },
+        (m, m2) -> {
+          m.putAll(m2);
+          return m;
+        });
   }
 }

@@ -46,10 +46,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Configuration
 @AutoConfigureAfter(HomeAutomationCorePersistenceAutoConfiguration.class)
 @EnableConfigurationProperties({PushoverConfiguration.class, PushbulletConfiguration.class})
+@ConditionalOnProperty(prefix = "homeautomation.spring-core.notification.push", name = "enabled", havingValue = "true")
 public class HomeAutomationCorePushNotificationAutoConfiguration {
 
   @Bean
-  @ConditionalOnProperty(prefix = "pushover", name = "enabled", havingValue = "true")
+  @ConditionalOnProperty(prefix = "homeautomation.spring-core.notification.push.pushover", name = "enabled", havingValue = "true")
   PushoverService pushoverNotificationServiceFactory(RestClient restClient,
                                                      PushoverConfiguration pushoverConfiguration
   ) {
@@ -57,7 +58,7 @@ public class HomeAutomationCorePushNotificationAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(prefix = "pushbullet", name = "enabled", havingValue = "true")
+  @ConditionalOnProperty(prefix = "homeautomation.spring-core.notification.push.pushbullet", name = "enabled", havingValue = "true")
   PushbulletService pushbulletNotificationServiceFactory(RestClient restClient,
                                                          PushbulletConfiguration pushbulletConfiguration
   ) {
@@ -65,7 +66,7 @@ public class HomeAutomationCorePushNotificationAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(prefix = "notification.push.default-sender", name = "enabled", havingValue = "true")
+  @ConditionalOnProperty(prefix = "homeautomation.spring-core.notification.push.default-sender", name = "enabled", havingValue = "true")
   @ConditionalOnMissingBean
   EventPushNotificationSender eventPushNotificationSender(EventPushNotificationConfigRepository eventPushNotificationConfigRepository,
                                                           Set<PushNotificationService> pushNotificationServices,
@@ -83,14 +84,14 @@ public class HomeAutomationCorePushNotificationAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   EventPushNotificationMessageTranslator eventPushNotificationMessageTranslator(MessageSource pushNotificationMessageSource,
-                                                                                @Value("${notification.push.translation.properties.defaultLocale:en}") String defaultLocale
+                                                                                @Value("${homeautomation.spring-core.notification.push.translation.properties.defaultLocale:en}") String defaultLocale
   ) {
     return new DefaultEventPushNotificationMessageTranslator(pushNotificationMessageSource, defaultLocale);
   }
 
   @Bean
   @ConditionalOnMissingBean
-  MessageSource pushNotificationMessageSource(@Value("${notification.push.translation.properties.baseName:device-property-message}") String baseName) {
+  MessageSource pushNotificationMessageSource(@Value("${homeautomation.spring-core.notification.push.translation.properties.baseName:device-property-message}") String baseName) {
     ResourceBundleMessageSource rs = new ResourceBundleMessageSource();
     rs.setBasename(baseName);
     rs.setDefaultEncoding(UTF_8.name());

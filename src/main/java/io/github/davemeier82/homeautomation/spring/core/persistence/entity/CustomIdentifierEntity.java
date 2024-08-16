@@ -75,6 +75,6 @@ public class CustomIdentifierEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return getClass().hashCode();
   }
 }

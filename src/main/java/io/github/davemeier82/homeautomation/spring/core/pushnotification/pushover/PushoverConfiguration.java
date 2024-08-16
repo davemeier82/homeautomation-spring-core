@@ -20,6 +20,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-@ConfigurationProperties(prefix = "pushover")
+@ConfigurationProperties(prefix = "homeautomation.spring-core.notification.push.pushover")
 public record PushoverConfiguration(List<PushoverCredential> credentials) {
 }

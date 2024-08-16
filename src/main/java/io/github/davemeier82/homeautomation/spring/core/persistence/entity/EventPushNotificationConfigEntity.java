@@ -42,16 +42,18 @@ public class EventPushNotificationConfigEntity {
   private String propertyValueType;
   private boolean onChangeOnly;
   private String serviceIds;
+  private Boolean booleanValueFilter;
 
   public EventPushNotificationConfigEntity() {
   }
 
-  public EventPushNotificationConfigEntity(DeviceEntity device, DevicePropertyEntity deviceProperty, String propertyValueType, boolean onChangeOnly, String serviceIds) {
+  public EventPushNotificationConfigEntity(DeviceEntity device, DevicePropertyEntity deviceProperty, String propertyValueType, boolean onChangeOnly, String serviceIds, Boolean booleanValueFilter) {
     this.device = device;
     this.deviceProperty = deviceProperty;
     this.propertyValueType = propertyValueType;
     this.onChangeOnly = onChangeOnly;
     this.serviceIds = serviceIds;
+    this.booleanValueFilter = booleanValueFilter;
   }
 
   public UUID getId() {
@@ -98,6 +100,14 @@ public class EventPushNotificationConfigEntity {
     this.serviceIds = serviceIds;
   }
 
+  public Boolean getBooleanValueFilter() {
+    return booleanValueFilter;
+  }
+
+  public void setBooleanValueFilter(Boolean booleanValueFilter) {
+    this.booleanValueFilter = booleanValueFilter;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -112,6 +122,6 @@ public class EventPushNotificationConfigEntity {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id);
+    return getClass().hashCode();
   }
 }

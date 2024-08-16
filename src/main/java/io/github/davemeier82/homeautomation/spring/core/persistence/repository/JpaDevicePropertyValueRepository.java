@@ -20,14 +20,17 @@ import io.github.davemeier82.homeautomation.spring.core.persistence.entity.Devic
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface JpaDevicePropertyValueRepository extends JpaRepository<DevicePropertyValueEntity, UUID> {
 
-  Optional<DevicePropertyValueEntity> findTopByDevicePropertyIdOrderByTimestampDesc(UUID devicePropertyId);
+  Optional<DevicePropertyValueEntity> findTopByDevicePropertyIdAndTypeOrderByTimestampDesc(UUID devicePropertyId, String type);
 
   long countById(UUID id);
+
+  void deleteAllByTimestampBefore(OffsetDateTime timestamp);
 
 }

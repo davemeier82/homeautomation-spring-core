@@ -20,13 +20,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-/**
- * Configuration for a <a href="https://www.pushbullet.com/">...</a> push notification service.
- *
- * @param credentials list of credentials
- * @author David Meier
- * @since 0.1.0
- */
-@ConfigurationProperties(prefix = "pushbullet")
+@ConfigurationProperties(prefix = "homeautomation.spring-core.notification.push.pushbullet")
 public record PushbulletConfiguration(List<PushbulletCredential> credentials) {
 }

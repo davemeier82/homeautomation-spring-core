@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 the original author or authors.
+ * Copyright 2021-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.davemeier82.homeautomation.spring.core.event;
+package io.github.davemeier82.homeautomation.spring.core.persistence.repository;
 
-import io.github.davemeier82.homeautomation.core.device.Device;
+import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DeviceParameterEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public class DeviceRegisteredEvent {
+import java.util.UUID;
 
-  private final Device device;
+@Repository
+public interface JpaDeviceParameterRepository extends JpaRepository<DeviceParameterEntity, UUID> {
 
-  public DeviceRegisteredEvent(Device device) {
-    this.device = device;
-  }
-
-  public Device getDevice() {
-    return device;
-  }
 }

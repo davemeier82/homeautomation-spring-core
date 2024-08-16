@@ -42,6 +42,7 @@ public class SpringDataEventPushNotificationConfigRepository implements EventPus
 
   @Override
   public Set<EventPushNotificationConfig> findAllByEvent(DevicePropertyEvent<?> event) {
+    boolean isBooleanEvent = Boolean.class.equals(event.getValueType().getClazz());
     boolean isUpdateEvent = event instanceof DevicePropertyUpdatedEvent;
     if (isUpdateEvent) {
       return repository.findAllBy(
@@ -53,11 +54,17 @@ public class SpringDataEventPushNotificationConfigRepository implements EventPus
       ).stream().map(mapper::map).collect(toSet());
     } else {
       return repository.findAllBy(
-          event.getDevicePropertyId().deviceId().id(),
-          event.getDevicePropertyId().deviceId().type().getTypeName(),
-          event.getDevicePropertyId().id(),
-          event.getValueType().getTypeName()
-      ).stream().map(mapper::map).collect(toSet());
+                           event.getDevicePropertyId().deviceId().id(),
+                           event.getDevicePropertyId().deviceId().type().getTypeName(),
+                           event.getDevicePropertyId().id(),
+                           event.getValueType().getTypeName()
+                       ).stream().filter(s -> {
+                         if (s.getBooleanValueFilter() == null || !isBooleanEvent || event.getNewValue() == null) {
+                           return true;
+                         }
+                         return s.getBooleanValueFilter().equals(event.getNewValue());
+                       }).map(mapper::map)
+                       .collect(toSet());
     }
   }
 }
