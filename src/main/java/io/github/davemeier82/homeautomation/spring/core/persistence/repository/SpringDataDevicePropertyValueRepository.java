@@ -68,8 +68,11 @@ public class SpringDataDevicePropertyValueRepository implements DevicePropertyVa
   @Override
   @org.springframework.transaction.annotation.Transactional(readOnly = true)
   public Optional<OffsetDateTime> lastTimeValueMatched(DevicePropertyId devicePropertyId, DevicePropertyValueType devicePropertyValueType, Object value) {
-    // TODO
-    return Optional.empty();
+    String deviceType = deviceTypeMapper.map(devicePropertyId.deviceId().type());
+    return devicePropertyRepository.findByDevicePropertyIdAndDevice_DeviceIdAndDevice_DeviceType(devicePropertyId.id(), devicePropertyId.deviceId().id(), deviceType)
+                                   .flatMap(entity -> devicePropertyValueRepository.findTopByDevicePropertyIdAndTypeAndValueOrderByTimestampDesc(entity.getId(), devicePropertyValueType.getTypeName(),
+                                       DevicePropertyValueEntityMapper.valueToString(value)))
+                                   .map(DevicePropertyValueEntity::getTimestamp);
   }
 
   public void deleteAllBefore(OffsetDateTime timestamp) {

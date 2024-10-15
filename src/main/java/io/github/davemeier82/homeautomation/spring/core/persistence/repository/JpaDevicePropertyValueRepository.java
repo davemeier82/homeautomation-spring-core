@@ -33,4 +33,6 @@ public interface JpaDevicePropertyValueRepository extends JpaRepository<DevicePr
 
   void deleteAllByTimestampBefore(OffsetDateTime timestamp);
 
+  Optional<DevicePropertyValueEntity> findTopByDevicePropertyIdAndTypeAndValueOrderByTimestampDesc(UUID devicePropertyId, String type, String value);
+
 }

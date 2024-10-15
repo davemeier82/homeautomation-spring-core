@@ -29,6 +29,8 @@ import io.github.davemeier82.homeautomation.core.updater.DevicePropertyCreator;
 import io.github.davemeier82.homeautomation.core.updater.DimmingLevelValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.HumidityValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.IlluminanceValueUpdateService;
+import io.github.davemeier82.homeautomation.core.updater.LightningCountValueUpdateService;
+import io.github.davemeier82.homeautomation.core.updater.LightningDistanceValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.MotionStateValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.PowerValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.PressureValueUpdateService;
@@ -55,6 +57,8 @@ import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultCo2Valu
 import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultDimmingLevelValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultHumidityValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultIlluminanceValueUpdateService;
+import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultLightningCountValueUpdateService;
+import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultLightningDistanceValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultMotionStateValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultPowerValueUpdateService;
 import io.github.davemeier82.homeautomation.core.updater.defaults.DefaultPressureValueUpdateService;
@@ -380,6 +384,28 @@ public class HomeAutomationCoreValueUpdateServiceAutoConfiguration {
                                                           EventFactory eventFactory
   ) {
     return new DefaultWindSpeedValueUpdateService(devicePropertyValueRepository, devicePropertyCreator, eventPublisher, eventFactory);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnBean({DevicePropertyValueRepository.class, DevicePropertyCreator.class, EventPublisher.class, EventFactory.class})
+  LightningCountValueUpdateService lightningCountValueUpdateService(DevicePropertyValueRepository devicePropertyValueRepository,
+                                                                    DevicePropertyCreator devicePropertyCreator,
+                                                                    EventPublisher eventPublisher,
+                                                                    EventFactory eventFactory
+  ) {
+    return new DefaultLightningCountValueUpdateService(devicePropertyValueRepository, devicePropertyCreator, eventPublisher, eventFactory);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnBean({DevicePropertyValueRepository.class, DevicePropertyCreator.class, EventPublisher.class, EventFactory.class})
+  LightningDistanceValueUpdateService lightningDistanceValueUpdateService(DevicePropertyValueRepository devicePropertyValueRepository,
+                                                                          DevicePropertyCreator devicePropertyCreator,
+                                                                          EventPublisher eventPublisher,
+                                                                          EventFactory eventFactory
+  ) {
+    return new DefaultLightningDistanceValueUpdateService(devicePropertyValueRepository, devicePropertyCreator, eventPublisher, eventFactory);
   }
 
 }

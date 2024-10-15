@@ -69,8 +69,12 @@ public class DevicePropertyValueEntityMapper {
     return null;
   }
 
+  public static String valueToString(Object value) {
+    return value == null ? null : value.toString();
+  }
+
   public DevicePropertyValueEntity map(UUID devicePropertyId, DevicePropertyValueType devicePropertyValueType, Object value, OffsetDateTime time) {
-    return new DevicePropertyValueEntity(devicePropertyId, devicePropertyValueType.getTypeName(), value == null ? null : value.toString(),
+    return new DevicePropertyValueEntity(devicePropertyId, devicePropertyValueType.getTypeName(), valueToString(value),
         time);
   }
 
