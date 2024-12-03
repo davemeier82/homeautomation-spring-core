@@ -24,6 +24,8 @@ import io.github.davemeier82.homeautomation.core.repositories.DevicePropertyValu
 import io.github.davemeier82.homeautomation.spring.core.persistence.entity.DevicePropertyValueEntity;
 import io.github.davemeier82.homeautomation.spring.core.persistence.mapper.DevicePropertyValueEntityMapper;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -31,6 +33,7 @@ import java.util.Optional;
 @Transactional
 public class SpringDataDevicePropertyValueRepository implements DevicePropertyValueRepository {
 
+  private static final Logger log = LoggerFactory.getLogger(SpringDataDevicePropertyValueRepository.class);
   private final JpaDevicePropertyValueRepository devicePropertyValueRepository;
   private final JpaDevicePropertyRepository devicePropertyRepository;
   private final DeviceTypeMapper deviceTypeMapper;
@@ -50,10 +53,16 @@ public class SpringDataDevicePropertyValueRepository implements DevicePropertyVa
   @Override
   public void insert(DevicePropertyId devicePropertyId, DevicePropertyValueType devicePropertyValueType, String displayName, Object value, OffsetDateTime time) {
     String deviceType = deviceTypeMapper.map(devicePropertyId.deviceId().type());
-    DevicePropertyValueEntity entity = devicePropertyRepository.findByDevicePropertyIdAndDevice_DeviceIdAndDevice_DeviceType(devicePropertyId.id(), devicePropertyId.deviceId().id(),
+    devicePropertyRepository.findByDevicePropertyIdAndDevice_DeviceIdAndDevice_DeviceType(devicePropertyId.id(), devicePropertyId.deviceId().id(),
                                                                    deviceType)
-                                                               .map(e -> devicePropertyValueEntityMapper.map(e.getId(), devicePropertyValueType, value, time)).orElseThrow();
-    devicePropertyValueRepository.save(entity);
+                            .map(e -> {
+                              DevicePropertyValueEntity dpve = devicePropertyValueEntityMapper.map(e.getId(), devicePropertyValueType, value, time);
+                              if (devicePropertyValueRepository.findByDevicePropertyIdAndTypeAndTimestamp(e.getId(), dpve.getType(), time).isEmpty()) {
+                                return dpve;
+                              }
+                              log.info("value {} for {} at {} already saved", value, devicePropertyId, time);
+                              return null;
+                            }).ifPresentOrElse(devicePropertyValueRepository::save, () -> log.info("value {} for {} at {}  saved", value, devicePropertyId, time));
   }
 
   @Override

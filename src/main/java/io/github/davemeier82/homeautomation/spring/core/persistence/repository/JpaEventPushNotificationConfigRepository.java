@@ -29,25 +29,18 @@ public interface JpaEventPushNotificationConfigRepository extends JpaRepository<
 
   @Query(value = """
       SELECT e FROM event_push_notification_config e
-      left join e.device d
-      left join e.deviceProperty dp
       WHERE e.onChangeOnly = :onChangeOnly
-      AND (e.device IS NULL OR e.device.deviceId = :deviceId)
-      AND (e.device IS NULL or e.device.deviceType = :deviceType)
-      AND (e.deviceProperty IS NULL OR e.deviceProperty.devicePropertyId = :devicePropertyId)
-      AND (e.propertyValueType  IS NULL OR e.propertyValueType = :propertyValueType)
+      AND (e.device IS NULL OR e.device.id = :deviceId)
+      AND (e.deviceProperty IS NULL OR e.deviceProperty.id = :devicePropertyId)
+      AND (e.propertyValueType IS NULL OR e.propertyValueType = :propertyValueType)
       """)
-  Set<EventPushNotificationConfigEntity> findAllBy(String deviceId, String deviceType, String devicePropertyId, String propertyValueType, boolean onChangeOnly);
+  Set<EventPushNotificationConfigEntity> findAllBy(UUID deviceId, UUID devicePropertyId, String propertyValueType, boolean onChangeOnly);
 
   @Query(value = """
       SELECT e FROM event_push_notification_config e
-      left join e.device d
-      left join e.deviceProperty dp
-      WHERE
-      (e.device IS NULL OR e.device.deviceId = :deviceId)
-      AND (e.device IS NULL or e.device.deviceType = :deviceType)
-      AND (e.deviceProperty IS NULL OR e.deviceProperty.devicePropertyId = :devicePropertyId)
-      AND (e.propertyValueType  IS NULL OR e.propertyValueType = :propertyValueType)
+      WHERE (e.device IS NULL OR e.device.id = :deviceId)
+      AND (e.deviceProperty IS NULL OR e.deviceProperty.id = :devicePropertyId)
+      AND (e.propertyValueType IS NULL OR e.propertyValueType = :propertyValueType)
       """)
-  Set<EventPushNotificationConfigEntity> findAllBy(String deviceId, String deviceType, String devicePropertyId, String propertyValueType);
+  Set<EventPushNotificationConfigEntity> findAllBy(UUID deviceId, UUID devicePropertyId, String propertyValueType);
 }

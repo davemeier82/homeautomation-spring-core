@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -135,9 +136,11 @@ public class HomeAutomationCorePersistenceAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   EventPushNotificationConfigRepository eventPushNotificationConfigRepository(JpaEventPushNotificationConfigRepository eventPushNotificationConfigRepository,
-                                                                              EventPushNotificationConfigEntityMapper eventPushNotificationConfigEntityMapper
+                                                                              JpaDevicePropertyRepository jpaDevicePropertyRepository,
+                                                                              EventPushNotificationConfigEntityMapper eventPushNotificationConfigEntityMapper,
+                                                                              DeviceTypeMapper deviceTypeMapper
   ) {
-    return new SpringDataEventPushNotificationConfigRepository(eventPushNotificationConfigRepository, eventPushNotificationConfigEntityMapper);
+    return new SpringDataEventPushNotificationConfigRepository(eventPushNotificationConfigRepository, jpaDevicePropertyRepository, eventPushNotificationConfigEntityMapper, deviceTypeMapper);
   }
 
   @Bean
@@ -164,9 +167,10 @@ public class HomeAutomationCorePersistenceAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
+  @ConditionalOnProperty(value = "homeautomation.spring-core.device-property-value-repository.clean-up.enabled", havingValue = "true", matchIfMissing = true)
   @ConditionalOnBean(SpringDataDevicePropertyValueRepository.class)
   SpringDataDevicePropertyValueRepositoryHousekeeper springDataDevicePropertyValueRepositoryHousekeeper(SpringDataDevicePropertyValueRepository springDataDevicePropertyValueRepository,
-                                                                                                        @Value("${homeautomation.spring-core.device-property-value-repository.clean-up.duration:P90D}")
+                                                                                                        @Value("${homeautomation.spring-core.device-property-value-repository.clean-up.duration:P30D}")
                                                                                                         Duration deleteOlderThanDuration
   ) {
     return new SpringDataDevicePropertyValueRepositoryHousekeeper(springDataDevicePropertyValueRepository, deleteOlderThanDuration);

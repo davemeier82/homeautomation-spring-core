@@ -16,6 +16,8 @@
 
 package io.github.davemeier82.homeautomation.spring.core.persistence.repository;
 
+import io.github.davemeier82.homeautomation.core.device.DeviceId;
+import io.github.davemeier82.homeautomation.core.device.DeviceTypeMapper;
 import io.github.davemeier82.homeautomation.core.event.DevicePropertyEvent;
 import io.github.davemeier82.homeautomation.core.event.DevicePropertyUpdatedEvent;
 import io.github.davemeier82.homeautomation.core.notification.EventPushNotificationConfig;
@@ -32,39 +34,50 @@ import static java.util.stream.Collectors.toSet;
 public class SpringDataEventPushNotificationConfigRepository implements EventPushNotificationConfigRepository {
 
   private final JpaEventPushNotificationConfigRepository repository;
+  private final JpaDevicePropertyRepository jpaDevicePropertyRepository;
   private final EventPushNotificationConfigEntityMapper mapper;
+  private final DeviceTypeMapper deviceTypeMapper;
 
-  public SpringDataEventPushNotificationConfigRepository(JpaEventPushNotificationConfigRepository eventPushNotificationConfigRepository, EventPushNotificationConfigEntityMapper mapper) {
+  public SpringDataEventPushNotificationConfigRepository(JpaEventPushNotificationConfigRepository eventPushNotificationConfigRepository,
+                                                         JpaDevicePropertyRepository jpaDevicePropertyRepository, EventPushNotificationConfigEntityMapper mapper,
+                                                         DeviceTypeMapper deviceTypeMapper
+  ) {
     repository = eventPushNotificationConfigRepository;
+    this.jpaDevicePropertyRepository = jpaDevicePropertyRepository;
     this.mapper = mapper;
+    this.deviceTypeMapper = deviceTypeMapper;
   }
 
 
   @Override
   public Set<EventPushNotificationConfig> findAllByEvent(DevicePropertyEvent<?> event) {
-    boolean isBooleanEvent = Boolean.class.equals(event.getValueType().getClazz());
-    boolean isUpdateEvent = event instanceof DevicePropertyUpdatedEvent;
-    if (isUpdateEvent) {
-      return repository.findAllBy(
-          event.getDevicePropertyId().deviceId().id(),
-          event.getDevicePropertyId().deviceId().type().getTypeName(),
-          event.getDevicePropertyId().id(),
-          event.getValueType().getTypeName(),
-          false
-      ).stream().map(mapper::map).collect(toSet());
-    } else {
-      return repository.findAllBy(
-                           event.getDevicePropertyId().deviceId().id(),
-                           event.getDevicePropertyId().deviceId().type().getTypeName(),
-                           event.getDevicePropertyId().id(),
-                           event.getValueType().getTypeName()
-                       ).stream().filter(s -> {
-                         if (s.getBooleanValueFilter() == null || !isBooleanEvent || event.getNewValue() == null) {
-                           return true;
-                         }
-                         return s.getBooleanValueFilter().equals(event.getNewValue());
-                       }).map(mapper::map)
-                       .collect(toSet());
-    }
+
+    DeviceId deviceId = event.getDevicePropertyId().deviceId();
+    String deviceType = deviceTypeMapper.map(deviceId.type());
+    return jpaDevicePropertyRepository.findByDevicePropertyIdAndDevice_DeviceIdAndDevice_DeviceType(event.getDevicePropertyId().id(), deviceId.id(), deviceType)
+                                      .map(entity -> {
+                                        boolean isBooleanEvent = Boolean.class.equals(event.getValueType().getClazz());
+                                        boolean isUpdateEvent = event instanceof DevicePropertyUpdatedEvent;
+                                        if (isUpdateEvent) {
+                                          return repository.findAllBy(
+                                              entity.getDevice().getId(),
+                                              entity.getId(),
+                                              event.getValueType().getTypeName(),
+                                              false
+                                          ).stream().map(mapper::map).collect(toSet());
+                                        } else {
+                                          return repository.findAllBy(
+                                                               entity.getDevice().getId(),
+                                                               entity.getId(),
+                                                               event.getValueType().getTypeName()
+                                                           ).stream().filter(s -> {
+                                                             if (s.getBooleanValueFilter() == null || !isBooleanEvent || event.getNewValue() == null) {
+                                                               return true;
+                                                             }
+                                                             return s.getBooleanValueFilter().equals(event.getNewValue());
+                                                           }).map(mapper::map)
+                                                           .collect(toSet());
+                                        }
+                                      }).orElse(Set.of());
   }
 }
