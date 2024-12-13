@@ -1,0 +1,28 @@
+spring:
+  main:
+    banner-mode: off
+  threads.virtual.enabled: true
+  datasource:
+    url: jdbc:h2:mem:hadb;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    open-in-view: off
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        format_sql: true
+        show_sql: true
+    show-sql: true
+
+homeautomation:
+  spring-core:
+    device-property-value-repository:
+      clean-up:
+        enabled: false
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
