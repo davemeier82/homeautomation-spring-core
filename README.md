@@ -149,7 +149,7 @@ This shows an example of a postgres database.
 ```yaml
 spring:
     datasource:
-        url: jdbc:postgresql://192.168.q.100:5432/postgres?currentSchema=ha
+        url: jdbc:postgresql://192.168.1.100:5432/postgres?currentSchema=ha
         username: postgres
         password: postgres
     jpa:
