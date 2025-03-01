@@ -8,24 +8,26 @@ Checkout the detailed usage in the Demo: [homeautomation-demo](https://github.co
 
 ```xml
 
-<dependencyManagement>
+<project>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.davemeier82.homeautomation</groupId>
+                <artifactId>homeautomation-bom</artifactId>
+                <version>${homeautomation-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.github.davemeier82.homeautomation</groupId>
-            <artifactId>homeautomation-bom</artifactId>
-            <version>${homeautomation-bom.version}</version>
-            <scope>import</scope>
-            <type>pom</type>
+            <artifactId>homeautomation-spring-core</artifactId>
         </dependency>
     </dependencies>
-</dependencyManagement>
-
-<dependencies>
-<dependency>
-    <groupId>io.github.davemeier82.homeautomation</groupId>
-    <artifactId>homeautomation-spring-core</artifactId>
-</dependency>
-</dependencies>
+</project>
 ```
 
 ## Supported Events
@@ -63,3 +65,76 @@ Checkout the detailed usage in the Demo: [homeautomation-demo](https://github.co
 | WindowTiltAngleChanged/Updated    | Window tilt angle                     | degree                                  | 
 | MqttClientConnected               | Connection to Mqtt Broker established |                                         | 
 | NewDevicePropertyCreatedEvent     | New device property got created       |                                         | 
+
+## Push notifications
+
+There is support for two Push-Notification services built-in. You can easily add a custom one by implementing the interface `PushNotificationService`.
+
+#### Configuration parameter
+
+| Property                                                                          | Default Value           | Description                                          |
+|-----------------------------------------------------------------------------------|-------------------------|------------------------------------------------------|
+| homeautomation.spring-core.notification.push.enabled                              | false                   | Enables the push notification support                |
+| homeautomation.spring-core.notification.push.default-sender                       | false                   | Enables the default push notification sender         |
+| homeautomation.spring-core.notification.push.translation.properties.defaultLocale | en                      | Default locale for the push notification messages    |
+| homeautomation.spring-core.notification.push.translation.properties.baseName      | device-property-message | ResourceBundle basename for the message translations |
+
+### Pushover https://pushover.net/
+
+#### Configuration parameter
+
+| Property                                                                | Default Value | Description                                                                  |
+|-------------------------------------------------------------------------|---------------|------------------------------------------------------------------------------|
+| homeautomation.spring-core.notification.push.pushover.enabled           | false         | Enables the pushbullet support                                               |
+| homeautomation.spring-core.notification.push.pushover.credentials       |               | Array of credentials                                                         |
+| homeautomation.spring-core.notification.push.pushover.credentials.id    |               | Unique custom ID to identify this push notification service in the framework |
+| homeautomation.spring-core.notification.push.pushover.credentials.user  |               | Pushover user                                                                |
+| homeautomation.spring-core.notification.push.pushover.credentials.token |               | Pushover token                                                               |          
+
+### Pushbullet https://www.pushbullet.com/
+
+#### Configuration parameter
+
+| Property                                                                  | Default Value | Description                                                                  |
+|---------------------------------------------------------------------------|---------------|------------------------------------------------------------------------------|
+| homeautomation.spring-core.notification.push.pushbullet.enabled           | false         | Enables the pushbullet support                                               |
+| homeautomation.spring-core.notification.push.pushbullet.credentials       |               | Array of credentials                                                         |
+| homeautomation.spring-core.notification.push.pushbullet.credentials.id    |               | Unique custom ID to identify this push notification service in the framework |
+| homeautomation.spring-core.notification.push.pushbullet.credentials.token |               | Pushover token                                                               |
+
+## Persistence
+
+The configuration of the database is done in the standard way of spring boot.
+
+### H2 Database
+
+This shows an example of an in-memory h2 database (not recommended).
+
+```yaml
+spring:
+    datasource:
+        url: jdbc:h2:file:~/hadb;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+        username: sa
+        password: password
+        driver-class-name: org.h2.Driver
+    jpa:
+        open-in-view: off
+        database-platform: org.hibernate.dialect.H2Dialect
+        properties:
+            hibernate:
+                globally_quoted_identifiers: true
+```
+
+### Postgres
+
+This shows an example of a postgres database.
+
+```yaml
+spring:
+    datasource:
+        url: jdbc:postgresql://192.168.q.100:5432/postgres?currentSchema=ha
+        username: postgres
+        password: postgres
+    jpa:
+        open-in-view: off
+```
