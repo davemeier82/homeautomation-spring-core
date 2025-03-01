@@ -2,6 +2,23 @@
 
 This is a Spring Boot implementation of the [homeautomation-core](https://github.com/davemeier82/homeautomation-core/blob/main/README.md) home automation framework.
 
+<!-- TOC -->
+
+* [homeautomation-spring-core](#homeautomation-spring-core)
+    * [Usage](#usage)
+    * [Supported Events](#supported-events)
+    * [Push notifications](#push-notifications)
+        * [Configuration parameter](#configuration-parameter)
+        * [Pushover https://pushover.net/](#pushover-httpspushovernet)
+            * [Configuration parameter](#configuration-parameter-1)
+        * [Pushbullet https://www.pushbullet.com/](#pushbullet-httpswwwpushbulletcom)
+            * [Configuration parameter](#configuration-parameter-2)
+    * [Persistence](#persistence)
+        * [H2 Database](#h2-database)
+        * [Postgres](#postgres)
+
+<!-- TOC -->
+
 ## Usage
 
 Checkout the detailed usage in the Demo: [homeautomation-demo](https://github.com/davemeier82/homeautomation-demo/blob/main/README.md)
