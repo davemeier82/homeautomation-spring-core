@@ -21,5 +21,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "homeautomation.spring-core.notification.push.pushover")
-public record PushoverConfiguration(List<PushoverCredential> credentials) {
+public record PushoverConfiguration(List<PushoverCredential> credentials, boolean enabled) {
 }
