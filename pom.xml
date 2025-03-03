@@ -20,7 +20,7 @@
     <parent>
         <groupId>io.github.davemeier82.homeautomation</groupId>
         <artifactId>homeautomation-parent</artifactId>
-        <version>0.6.3</version>
+        <version>0.6.4</version>
     </parent>
 
     <artifactId>homeautomation-spring-core</artifactId>
@@ -56,8 +56,8 @@
     </issueManagement>
 
     <properties>
-        <homeautomation-core.version>0.6.3</homeautomation-core.version>
-        <shedlock.version>5.16.0</shedlock.version>
+        <homeautomation-core.version>0.6.4</homeautomation-core.version>
+        <shedlock.version>6.3.0</shedlock.version>
     </properties>
 
     <dependencies>
