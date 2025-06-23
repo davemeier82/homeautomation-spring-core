@@ -64,7 +64,10 @@ public class PushoverService implements PushNotificationService {
                                   .queryParam("user", credential.user())
                                   .queryParam("message", message)
                                   .queryParam("title", title)
-                                  .build().toUri();
+                                  .build()
+                                  .encode()
+                                  .toUri();
+    log.trace(uri.toString());
     String body = restClient.post()
                             .uri(uri)
                             .retrieve().body(String.class);
