@@ -16,6 +16,7 @@
 
 package io.github.davemeier82.homeautomation.spring.core.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -28,8 +29,11 @@ import java.util.Objects;
 public class LatestDevicePropertyValueEntity {
   @EmbeddedId
   private DevicePropertyId id;
+  @Column(name = "device_display_name")
   private String deviceDisplayName;
+  @Column(name = "device_property_type")
   private String devicePropertyType;
+  @Column(name = "device_property_display_name")
   private String devicePropertyDisplayName;
   private String value;
   private OffsetDateTime timestamp;

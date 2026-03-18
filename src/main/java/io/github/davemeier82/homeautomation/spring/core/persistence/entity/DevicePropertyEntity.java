@@ -16,6 +16,7 @@
 
 package io.github.davemeier82.homeautomation.spring.core.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,9 @@ public class DevicePropertyEntity {
   @ManyToOne(fetch = FetchType.EAGER)
   private DeviceEntity device;
   private String type;
+  @Column(name = "device_property_id")
   private String devicePropertyId;
+  @Column(name = "display_name")
   private String displayName;
 
   public DevicePropertyEntity() {

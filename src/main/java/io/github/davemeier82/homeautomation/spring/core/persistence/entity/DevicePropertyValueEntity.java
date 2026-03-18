@@ -16,6 +16,7 @@
 
 package io.github.davemeier82.homeautomation.spring.core.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +32,7 @@ public class DevicePropertyValueEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+  @Column(name = "device_property_id")
   private UUID devicePropertyId;
   private String type;
   private String value;

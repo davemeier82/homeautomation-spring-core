@@ -17,6 +17,7 @@
 package io.github.davemeier82.homeautomation.spring.core.persistence.entity;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ import java.util.UUID;
 @Embeddable
 public class DeviceParameterId implements Serializable {
 
+  @Column(name = "device_id")
   private UUID deviceId;
   private String name;
 

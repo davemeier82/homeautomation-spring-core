@@ -16,6 +16,7 @@
 
 package io.github.davemeier82.homeautomation.spring.core.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -39,9 +40,13 @@ public class EventPushNotificationConfigEntity {
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "device_property_id")
   private DevicePropertyEntity deviceProperty;
+  @Column(name = "property_value_type")
   private String propertyValueType;
+  @Column(name = "on_change_only")
   private boolean onChangeOnly;
+  @Column(name = "service_ids")
   private String serviceIds;
+  @Column(name = "boolean_value_filter")
   private Boolean booleanValueFilter;
 
   public EventPushNotificationConfigEntity() {

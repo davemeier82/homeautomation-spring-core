@@ -16,15 +16,20 @@
 
 package io.github.davemeier82.homeautomation.spring.core.persistence.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
 public class DevicePropertyId {
+  @Column(name = "device_id")
   private String deviceId;
+  @Column(name = "device_type")
   private String deviceType;
+  @Column(name = "device_property_id")
   private String devicePropertyId;
+  @Column(name = "device_property_value_type")
   private String devicePropertyValueType;
 
   public DevicePropertyId() {

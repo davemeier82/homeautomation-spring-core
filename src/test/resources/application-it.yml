@@ -9,7 +9,6 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     open-in-view: off
-    database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate:
         globally_quoted_identifiers: true
